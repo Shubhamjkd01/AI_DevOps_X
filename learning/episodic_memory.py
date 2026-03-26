@@ -55,14 +55,15 @@ def calculate_confidence(error_text: str) -> tuple[float, str]:
     conf = successes / total
     return conf, f"based on {successes}/{total} similar past patches passing validation"
 
-def save_patch_memory(error: str, patch: str, accepted: bool):
+def save_patch_memory(error: str, patch: str, reward: float = 1.0):
     kb = get_knowledge_base()
     emb = get_embedding(error)
     kb.append({
         "error": error,
         "error_embedding": emb,
         "patch": patch,
-        "accepted": accepted
+        "reward": reward,
+        "accepted": reward > 0.0
     })
     with open(KNOWLEDGE_BASE_FILE, "w") as f:
         json.dump(kb, f)

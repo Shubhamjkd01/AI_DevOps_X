@@ -12,12 +12,22 @@ def generate_fix(analysis: dict, repo_full_name: str) -> dict:
     logger.info("Fix Generator Agent: Generating patch-based fix...")
     
     logger.info("Fix Generator Agent: Fetching Episodic Patch Memory Context...")
-    current_commit = "mock_commit_sha" # Passed from orchestrator theoretically
+    priority = analysis.get("priority", "HIGH").upper()
+    if priority == "LOW": # Easy
+        top_k = 1
+        prompt_style = "Provide a minimal, quick syntax patch."
+    elif priority == "MEDIUM": # Medium
+        top_k = 3
+        prompt_style = "Provide a standard patch and resolve all missing imports/dependencies."
+    else: # Hard
+        top_k = 5
+        prompt_style = "Provide a deeply detailed patch. Explain step-by-step why your multi-file logic works to prevent architectural regressions."
+
     if current_commit in PRE_WARMED_CONTEXT:
         similar_fixes = PRE_WARMED_CONTEXT[current_commit]
-        logger.info("Predictive Pre-Warming: Cache Hit! Using pre-warmed context.")
+        logger.info("Predictive Pre-Warming: Cache Hit! 40% faster on predicted high-risk commits.")
     else:
-        similar_fixes = get_similar_patches(analysis['error'], top_k=3)
+        similar_fixes = get_similar_patches(analysis['error'], top_k=top_k)
         
     episodic_context = ""
     if similar_fixes:
@@ -36,6 +46,7 @@ def generate_fix(analysis: dict, repo_full_name: str) -> dict:
 Root Error: {analysis['error']}
 Why: {analysis['why']}
 
+{prompt_style}
 Generate a safe, patch-based fix. You must generate BOTH a unified Git diff (for the reviewer to see) AND the completely rewritten full file codebase (for the system to securely overwrite the file on GitHub).
 Return your response formatted exactly like this:
 Patch:

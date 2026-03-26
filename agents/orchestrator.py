@@ -6,7 +6,6 @@ from agents.fixer import generate_fix
 from agents.validator import validate_fix
 from agents.pr_agent import create_fix_pr
 from learning.episodic_memory import save_patch_memory
-from learning.grader import evaluate_patch_reward
 
 logger = logging.getLogger(__name__)
 
@@ -37,14 +36,18 @@ def handle_workflow_failure(repo_full_name: str, run_id: int):
             time_to_fix = round(time.time() - start_time, 2)
             logger.info(f"Orchestrator: Process complete. PR created: {pr_url} (Time to Fix: {time_to_fix}s)")
             
-            # Episodic Memory: Save Patch Details
-            save_patch_memory(analysis['error'], fix_data["content"], True)
+            # Episodic Memory: Save Patch Details (Reward = 1.0 on success)
+            save_patch_memory(analysis['error'], fix_data["content"], reward=1.0)
             
             return pr_url
         else:
             logger.warning("Orchestrator: Fix validation failed (Regression caught). Aborting PR.")
+            # Penalize failed fixes
+            save_patch_memory(analysis.get('error', 'unknown error'), fix_data.get("content", ""), reward=0.0)
             return None
             
     except Exception as e:
-        logger.error(f"Orchestrator: Error during processing: {str(e)}")
+        error_msg = str(e)
+        logger.error(f"Orchestrator: Agent execution crashed! Fault Tolerance Active. Reason: {error_msg}")
+        save_patch_memory(f"SYSTEM_CRASH_OR_TIMEOUT: {error_msg}", "N/A", reward=0.0)
         raise

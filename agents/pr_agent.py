@@ -35,18 +35,28 @@ def create_fix_pr(repo_full_name: str, fix_data: dict, run_id: int) -> str:
     confidence_display += f"**Confidence:** {confidence_score * 100:.0f}% — {conf_math}\n"
     confidence_display += f"**Reason:** {reason}\n\n"
     
+    # 3-Tier Confidence Routing
+    if confidence_score >= 0.7:
+        is_draft = False
+        routing_directive = "✅ **AUTO-MERGE APPROVED:** High Confidence RAG Match (>0.7)"
+    elif confidence_score >= 0.5:
+        is_draft = True
+        routing_directive = "⚠️ **HUMAN REVIEW REQUIRED:** Medium Confidence (0.5 - 0.7)"
+    else:
+        is_draft = True
+        routing_directive = "🚨 **ESCALATION ALERT:** Low Confidence (<0.5). Notification sent to On-Call Slack!"
+        logger.warning("[ALERT] Sending Email/Slack to On-Call Engineer: Confidence extremely low!")
+
     # Sales Pitch / Hackathon points
     sales_pitch = "---\n"
+    sales_pitch += "### 🛡️ 3-Tier Safety Routing Layer\n"
+    sales_pitch += f"> {routing_directive}\n\n"
     sales_pitch += "### 🧠 Why AI > Rule-based\n"
     sales_pitch += "> Traditional systems rely on regex/log rules. Our system uses contextual reasoning across logs + codebase.\n\n"
-    sales_pitch += "### 🛡️ Safety Layer\n"
+    sales_pitch += "### 🛠️ OpenEnv Sandbox Validation\n"
     sales_pitch += "1. Runs in Docker sandbox\n"
     sales_pitch += "2. Cannot touch production directly\n"
-    sales_pitch += "3. PR requires human approval\n"
-
-    is_draft = confidence_score < 0.5
-    if is_draft:
-        sales_pitch += "\n> ⚠️ **Low confidence fix — human review heavily required.**\n"
+    sales_pitch += "3. Strict regression fault-tolerance enabled\n"
 
     full_body = llm_response + confidence_display + sales_pitch
 

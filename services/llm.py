@@ -44,3 +44,12 @@ def query_llm(prompt: str) -> str:
     except Exception as e:
         logger.error(f"Gemini error: {e}")
         return "Error calling LLM"
+
+# LangSmith Observability Wrapper
+if os.getenv("LANGCHAIN_TRACING_V2", "false").lower() == "true":
+    try:
+        from langsmith import traceable
+        query_llm = traceable(query_llm)
+        logger.info("LangSmith Observability Tracing ACTIVE.")
+    except ImportError:
+        logger.warning("LangSmith SDK not installed. Skipping tracing.")
