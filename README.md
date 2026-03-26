@@ -8,85 +8,82 @@ An enterprise-grade, hackathon-winning AI pipeline that natively intercepts GitH
 * **Safety Layer**: All AI operations run cleanly inside a Docker Sandbox equivalent, cannot touch production directly, and deploy mathematically pure unified Git diffs into Draft PRs requiring full human-in-the-loop approval.
 
 ### 🏗️ Workflow Architecture Diagram
-```mermaid
-flowchart TD
-    %% Styling
-    classDef external fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef agent fill:#bbf,stroke:#333,stroke-width:2px;
-    classDef core fill:#dfd,stroke:#333,stroke-width:2px;
-    classDef data fill:#ffd,stroke:#333,stroke-width:2px;
-    classDef rl fill:#fdb,stroke:#333,stroke-width:2px;
+flowchart LR
 
-    %% RL Environment Meta-Structure
-    subgraph Reinforcement Environment
-        ENV_API["OpenEnv Interface: /reset, /step, /state"] ::: rl
-        TASK_MGR["Task Manager: Easy, Medium, Hard"] ::: rl
+    %% ========== INPUT LAYER ==========
+    subgraph INPUT_LAYER
+        A["Developer Push / CI Trigger"]
+        B["GitHub Actions Failure"]
     end
 
-    %% Triggers
-    A(["💻 Local Terminal (python run_everything.py)"]) --> B["trigger.py (Mock Payload)"]
-    GH_API_EXT[("Remote CI: GitHub Actions")] -.->|"Real Cloud Webhook"| B
+    %% ========== API LAYER ==========
+    subgraph API_LAYER
+        C["FastAPI Server (Webhook)"]
+        ENV["OpenEnv API: /reset /step /state"]
+    end
 
-    %% Backend Entry
-    B -->|POST /api/v1/webhook/github| C{"FastAPI Server (main.py)"}
-    C ::: core
+    %% ========== ORCHESTRATION ==========
+    subgraph ORCHESTRATOR
+        D["Orchestrator Engine"]
+    end
 
-    %% Connect ENV to Orchestrator
-    ENV_API <==>|RL State Management| C
-    TASK_MGR -->|Injects Scenario| ENV_API
+    %% ========== AI AGENTS ==========
+    subgraph AI_AGENTS
+        E["Analyzer Agent"]
+        F["Predictor Agent"]
+        G["Fixer Agent"]
+        H["Validator Agent"]
+        I["PR Agent"]
+    end
 
-    %% Orchestrator
-    C -->|Spawns Background Thread| D["orchestrator.py"]
-    D ::: core
-    
-    %% API Integrations
-    PYGITHUB[("PyGithub API Wrapper")] ::: external
-    GEMINI[("Google Gemini: text-embedding-004 \n& gemini-1.5-flash")] ::: external
+    %% ========== MEMORY ==========
+    subgraph MEMORY
+        M["Episodic Patch Memory"]
+        CACHE["Pre-warmed Context"]
+    end
 
-    %% Analyzer Agent
-    D -->|1. Fetch CI Logs| PYGITHUB
-    D -->|2. Pass Raw Logs| E["Analyzer Agent"]
-    E ::: agent
-    E -->|Prompt Injection| GEMINI
-    GEMINI -.->|"Returns Structured Schema"| E
-    E -->|Extracts| E_Data[("JSON Object: {priority, confidence, file_path, error}")] ::: data
+    %% ========== LLM ==========
+    subgraph LLM_LAYER
+        LLM["Gemini / LLM API"]
+    end
 
-    %% Pre-Warming & Memory
-    E_Data -->|Triggers Analytics| F["Predictor Agent"] ::: agent
-    F -->|Computes Cosine Similarity Math| G[("episodic_patch_memory.json")] ::: data
-    G -.->|"Returns Top-3 Semantic Matches"| F
-    F -->|Caches Latency| H[("PRE_WARMED_CONTEXT (RAM)")] ::: data
+    %% ========== RL SYSTEM ==========
+    subgraph RL_ENVIRONMENT
+        TASKS["Task Manager (Easy / Medium / Hard)"]
+        GRADER["Reward System (+1 / +0.5 / 0)"]
+    end
 
-    %% Fixer Agent
-    E_Data -->|Passes target file_path| I["Fixer Agent"] ::: agent
-    H -.->|Retrieves Cached Context| I
-    I -->|Fetches Live Source Code| PYGITHUB
-    I -->|Prompt: Source + Error + Vector Memory| GEMINI
-    GEMINI -.->|"Returns AI Code Generation"| I
-    I -->|Parses Output| I_Data[("Dual-Payload: Unified Patch Diff + Full Raw Source Code")] ::: data
+    %% ========== OUTPUT ==========
+    subgraph OUTPUT
+        PR["Pull Request Created"]
+        DASH["Monitoring Dashboard"]
+    end
 
-    %% Validator
-    I_Data --> J["Validator Agent (Sandbox)"] ::: agent
-    J -->|Executes Sandbox Unit Tests| J_Result{"Did Regression Tests Pass?"}
-    
-    %% NEW: Grader Module
-    J_Result -->|Reward Signal| GRADER["Grader Module: Full fix → +1.0, Partial fix → +0.5, Fail → 0"] ::: rl
-    
-    %% PR Agent
-    GRADER --> K["PR Generation Agent"] ::: agent
-    K -->|Evaluates Vector Math| K_Math{"Is Semantic Confidence >= 0.50 ?"}
-    
-    K_Math -->|Yes: Safe Auto-fix| L["PyGithub: Create Standard Pull Request"]
-    K_Math -->|No: Human-in-Loop Needed| M["PyGithub: Create DRAFT Pull Request"]
-    
-    L --> PYGITHUB
-    M --> PYGITHUB
+    %% FLOW
+    A --> B --> C --> D
+    ENV <--> C
+    TASKS --> ENV
 
-    %% Dashboard Observability
-    D ===>|Publishes Telemetry Traces| N[["Streamlit Dashboard UI (dashboard.py)"]]
-    G ===>|Visualizes Latency & PR Diffs| N
-    GRADER -.->|Updates Global Metrics| N
-```
+    D --> E
+    E --> LLM --> E
+
+    E --> F
+    F --> M --> F
+    F --> CACHE
+
+    E --> G
+    CACHE --> G
+    G --> LLM --> G
+
+    G --> H
+    H --> GRADER
+
+    GRADER --> I
+    I --> PR
+
+    D -.-> DASH
+    GRADER -.-> DASH
+    M -.-> DASH
 
 ### 🚀 Step-by-Step Execution Process
 1. **Detection:** The pipeline crashes on GitHub. Our API intercepts the failure webhook automatically.
