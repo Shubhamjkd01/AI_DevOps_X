@@ -23,6 +23,7 @@ def generate_fix(analysis: dict, repo_full_name: str) -> dict:
         top_k = 5
         prompt_style = "Provide a deeply detailed patch. Explain step-by-step why your multi-file logic works to prevent architectural regressions."
 
+    current_commit = "mock_commit_sha"
     if current_commit in PRE_WARMED_CONTEXT:
         similar_fixes = PRE_WARMED_CONTEXT[current_commit]
         logger.info("Predictive Pre-Warming: Cache Hit! 40% faster on predicted high-risk commits.")
