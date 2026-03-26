@@ -11,25 +11,25 @@ An enterprise-grade, hackathon-winning AI pipeline that natively intercepts GitH
 ```mermaid
 flowchart LR
 
-%% ================= INPUT =================
+%% INPUT
 subgraph INPUT
 A[Developer Push]
-B[CI Pipeline Failure]
+B[CI Failure]
 end
 
-%% ================= API =================
+%% API
 subgraph API
-C[FastAPI Webhook Server]
-ENV[OpenEnv Interface<br/>reset / step / state]
+C[FastAPI Webhook]
+ENV[OpenEnv API reset step state]
 end
 
-%% ================= ORCHESTRATION =================
+%% CORE
 subgraph CORE
 D[Orchestrator Engine]
 end
 
-%% ================= AI PIPELINE =================
-subgraph AI_PIPELINE
+%% AI AGENTS
+subgraph AGENTS
 E[Analyzer Agent]
 F[Predictor Agent]
 G[Fixer Agent]
@@ -37,30 +37,30 @@ H[Validator Agent]
 I[PR Agent]
 end
 
-%% ================= MEMORY =================
+%% MEMORY
 subgraph MEMORY
 M[Episodic Patch Memory]
-CACHE[Prewarmed Context Cache]
+CACHE[Prewarmed Context]
 end
 
-%% ================= LLM =================
+%% LLM
 subgraph LLM
-L[LLM Engine (Gemini / OpenAI)]
+L[LLM Engine Gemini OpenAI]
 end
 
-%% ================= RL SYSTEM =================
-subgraph RL_ENV
-T[Task Manager<br/>Easy / Medium / Hard]
-R[Reward Engine<br/>+1 / +0.5 / 0]
+%% RL
+subgraph RL
+T[Task Manager Easy Medium Hard]
+R[Reward System plus1 plus05 zero]
 end
 
-%% ================= OUTPUT =================
+%% OUTPUT
 subgraph OUTPUT
-PR[Pull Request Created]
-OBS[Observability Dashboard]
+PR[Pull Request]
+OBS[Dashboard]
 end
 
-%% ================= FLOW =================
+%% FLOW
 A --> B --> C --> D
 
 ENV <--> C
@@ -87,7 +87,6 @@ D -.-> OBS
 R -.-> OBS
 M -.-> OBS
 ```
-
 ### 🚀 Step-by-Step Execution Process
 1. **Detection:** The pipeline crashes on GitHub. Our API intercepts the failure webhook automatically.
 2. **Analysis:** The Analyzer intelligently isolates the exact file path (e.g. `main.py`) that caused the crash.
