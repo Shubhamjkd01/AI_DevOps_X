@@ -1,0 +1,16 @@
+name: "ai-devops-ci-agent"
+version: "1.0.0"
+description: "A real-world Autonomous DevOps Agent environment. Given a broken GitHub CI pipeline log, agents must mathematically deduce the bug, apply dual-layer semantic modifications, and safely deploy fixes across Easy, Medium, and Hard regression tiers."
+author: "Agentic Hackathon Team"
+tags:
+  - openenv
+  - coding
+  - devops
+  - software-engineering
+endpoint: "http://localhost:8080"
+action_space:
+  type: "dict"
+  description: "Agent applies a GitHub semantic fix"
+observation_space:
+  type: "dict"
+  description: "CI Pipeline Logs and Source File Context"

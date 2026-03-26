@@ -1,0 +1,12 @@
+[
+    {
+        "error": "Error calling LLM",
+        "fix": "Error calling LLM",
+        "accepted": true
+    },
+    {
+        "error": "Pipeline execution failed",
+        "fix": "Error calling LLM",
+        "accepted": true
+    }
+]
