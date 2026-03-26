@@ -8,82 +8,85 @@ An enterprise-grade, hackathon-winning AI pipeline that natively intercepts GitH
 * **Safety Layer**: All AI operations run cleanly inside a Docker Sandbox equivalent, cannot touch production directly, and deploy mathematically pure unified Git diffs into Draft PRs requiring full human-in-the-loop approval.
 
 ### 🏗️ Workflow Architecture Diagram
+```mermaid
 flowchart LR
 
-    %% ========== INPUT LAYER ==========
-    subgraph INPUT_LAYER
-        A["Developer Push / CI Trigger"]
-        B["GitHub Actions Failure"]
-    end
+%% ================= INPUT =================
+subgraph INPUT
+A[Developer Push]
+B[CI Pipeline Failure]
+end
 
-    %% ========== API LAYER ==========
-    subgraph API_LAYER
-        C["FastAPI Server (Webhook)"]
-        ENV["OpenEnv API: /reset /step /state"]
-    end
+%% ================= API =================
+subgraph API
+C[FastAPI Webhook Server]
+ENV[OpenEnv Interface<br/>reset / step / state]
+end
 
-    %% ========== ORCHESTRATION ==========
-    subgraph ORCHESTRATOR
-        D["Orchestrator Engine"]
-    end
+%% ================= ORCHESTRATION =================
+subgraph CORE
+D[Orchestrator Engine]
+end
 
-    %% ========== AI AGENTS ==========
-    subgraph AI_AGENTS
-        E["Analyzer Agent"]
-        F["Predictor Agent"]
-        G["Fixer Agent"]
-        H["Validator Agent"]
-        I["PR Agent"]
-    end
+%% ================= AI PIPELINE =================
+subgraph AI_PIPELINE
+E[Analyzer Agent]
+F[Predictor Agent]
+G[Fixer Agent]
+H[Validator Agent]
+I[PR Agent]
+end
 
-    %% ========== MEMORY ==========
-    subgraph MEMORY
-        M["Episodic Patch Memory"]
-        CACHE["Pre-warmed Context"]
-    end
+%% ================= MEMORY =================
+subgraph MEMORY
+M[Episodic Patch Memory]
+CACHE[Prewarmed Context Cache]
+end
 
-    %% ========== LLM ==========
-    subgraph LLM_LAYER
-        LLM["Gemini / LLM API"]
-    end
+%% ================= LLM =================
+subgraph LLM
+L[LLM Engine (Gemini / OpenAI)]
+end
 
-    %% ========== RL SYSTEM ==========
-    subgraph RL_ENVIRONMENT
-        TASKS["Task Manager (Easy / Medium / Hard)"]
-        GRADER["Reward System (+1 / +0.5 / 0)"]
-    end
+%% ================= RL SYSTEM =================
+subgraph RL_ENV
+T[Task Manager<br/>Easy / Medium / Hard]
+R[Reward Engine<br/>+1 / +0.5 / 0]
+end
 
-    %% ========== OUTPUT ==========
-    subgraph OUTPUT
-        PR["Pull Request Created"]
-        DASH["Monitoring Dashboard"]
-    end
+%% ================= OUTPUT =================
+subgraph OUTPUT
+PR[Pull Request Created]
+OBS[Observability Dashboard]
+end
 
-    %% FLOW
-    A --> B --> C --> D
-    ENV <--> C
-    TASKS --> ENV
+%% ================= FLOW =================
+A --> B --> C --> D
 
-    D --> E
-    E --> LLM --> E
+ENV <--> C
+T --> ENV
 
-    E --> F
-    F --> M --> F
-    F --> CACHE
+D --> E
+E --> L --> E
 
-    E --> G
-    CACHE --> G
-    G --> LLM --> G
+E --> F
+F --> M --> F
+F --> CACHE
 
-    G --> H
-    H --> GRADER
+E --> G
+CACHE --> G
+G --> L --> G
 
-    GRADER --> I
-    I --> PR
+G --> H
+H --> R
 
-    D -.-> DASH
-    GRADER -.-> DASH
-    M -.-> DASH
+R --> I
+I --> PR
+
+D -.-> OBS
+R -.-> OBS
+M -.-> OBS
+```
 
 ### 🚀 Step-by-Step Execution Process
 1. **Detection:** The pipeline crashes on GitHub. Our API intercepts the failure webhook automatically.
