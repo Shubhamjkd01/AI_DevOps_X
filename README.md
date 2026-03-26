@@ -19,8 +19,8 @@ flowchart TD
 
     %% RL Environment Meta-Structure
     subgraph Reinforcement Environment
-        ENV_API["OpenEnv Interface:\n- /reset\n- /step\n- /state"] ::: rl
-        TASK_MGR["Task Manager:\n- Easy: Syntax Error\n- Medium: Dependency Issue\n- Hard: Multi-file Bug"] ::: rl
+        ENV_API["OpenEnv Interface:<br/>- /reset<br/>- /step<br/>- /state"] ::: rl
+        TASK_MGR["Task Manager:<br/>- Easy: Syntax Error<br/>- Medium: Dependency Issue<br/>- Hard: Multi-file Bug"] ::: rl
     end
 
     %% Triggers
@@ -49,7 +49,7 @@ flowchart TD
     E ::: agent
     E -->|Prompt Injection| GEMINI
     GEMINI -.->|"Returns Structured Schema"| E
-    E -->|Extracts| E_Data[("JSON Object:\n{priority, confidence, file_path, error}")] ::: data
+    E -->|Extracts| E_Data[("JSON Object:<br/>{priority, confidence, file_path, error}")] ::: data
 
     %% Pre-Warming & Memory
     E_Data -->|Triggers Analytics| F["Predictor Agent"] ::: agent
@@ -63,14 +63,14 @@ flowchart TD
     I -->|Fetches Live Source Code| PYGITHUB
     I -->|Prompt: Source + Error + Vector Memory| GEMINI
     GEMINI -.->|"Returns AI Code Generation"| I
-    I -->|Parses Output| I_Data[("Dual-Payload: \nUnified Patch Diff + Full Raw Source Code")] ::: data
+    I -->|Parses Output| I_Data[("Dual-Payload: <br/>Unified Patch Diff + Full Raw Source Code")] ::: data
 
     %% Validator
     I_Data --> J["Validator Agent (Sandbox)"] ::: agent
     J -->|Executes Sandbox Unit Tests| J_Result{"Did Regression Tests Pass?"}
     
     %% NEW: Grader Module
-    J_Result -->|Reward Signal| GRADER["Grader Module:\n- Full fix → +1.0\n- Partial fix → +0.5\n- Fail → 0"] ::: rl
+    J_Result -->|Reward Signal| GRADER["Grader Module:<br/>- Full fix → +1.0<br/>- Partial fix → +0.5<br/>- Fail → 0"] ::: rl
     
     %% PR Agent
     GRADER --> K["PR Generation Agent"] ::: agent
