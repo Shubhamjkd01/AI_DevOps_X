@@ -91,9 +91,9 @@ M -.-> OBS
 1. **Detection:** The pipeline crashes on GitHub. Our API intercepts the failure webhook automatically.
 2. **Analysis:** The Analyzer intelligently isolates the exact file path (e.g. `main.py`) that caused the crash.
 3. **Pre-Warming:** The system silently scans historical memory to find previous crashes mathematically similar to this one.
-4. **Targeted Fixing:** The Fixer downloads the real source code, applies the context, and perfectly rewrites the logic to resolve the crash.
-9. **Safety Validation:** The Sandbox executes mock regression testing safely preventing side-effect explosions.
-10. **Delivery:** The pull request is automatically deployed to the original GitHub repo, badged with AI-generated priorities and vector-math confidence scores!
+4. **Targeted Fixing:** The Fixer downloads the real source code, applies the context, and generates context-aware fixes to resolve the crash.
+5. **Safety Validation:** The Sandbox executes mock regression testing safely preventing side-effect explosions.
+6. **Delivery:** The pull request is automatically deployed to the original GitHub repo, badged with AI-generated priorities and vector-math confidence scores!
 
 ---
 
