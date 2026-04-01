@@ -14,7 +14,7 @@ class GitHubAgentEnv:
     OpenEnv Client Wrapper.
     Routes to the container exposed by app.py automatically during evaluation.
     """
-    def __init__(self, base_url="http://localhost:8000"):
+    def __init__(self, base_url="http://localhost:7860"):
         self.base_url = base_url
 
     async def reset(self) -> StepResult:
@@ -39,5 +39,5 @@ class GitHubAgentEnv:
     @classmethod
     async def from_docker_image(cls, image_name: str = None):
         """Mock constructor as defined in OpenEnv standards to bind to internal containers."""
-        # Assume sandbox environment is hooked to localhost:8000 inside the hackathon evaluator
-        return cls("http://localhost:8000")
+        # Assume sandbox environment is hooked to localhost:7860 inside the hackathon evaluator
+        return cls("http://localhost:7860")
