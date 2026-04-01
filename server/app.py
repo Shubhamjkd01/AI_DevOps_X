@@ -19,6 +19,10 @@ class StepResponse(BaseModel):
     done: bool
     info: dict
 
+@app.get("/")
+async def root():
+    return {"status": "online", "message": "GitHub Agent OpenEnv Environment is live and verified."}
+
 @app.post("/reset", response_model=DevOpsObservation)
 async def reset():
     return await simulator.reset()
