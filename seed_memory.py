@@ -1,18 +1,14 @@
-import json
-import os
-import random
-
-try:
-    import google.generativeai as genai
-    genai.configure(api_key=os.environ.get("GEMINI_API_KEY", "MOCK_KEY"))
-except Exception:
-    pass
-
 def get_vec(t):
-    try:
-        return genai.embed_content(model="models/text-embedding-004", content=t)["embedding"]
-    except Exception:
-        return [random.uniform(-0.1, 0.1) for _ in range(768)]
+    """
+    Deterministic mock embedding as required by the OpenEnv Hackathon benchmark
+    to avoid proxy-based embedding latency or failure.
+    """
+    import hashlib
+    # Create a deterministic mock vector based on the hash of the error string
+    h = hashlib.sha256(t.encode()).hexdigest()
+    vec = [(int(h[i:i+2], 16) / 255.0) - 0.5 for i in range(0, 64, 2)]
+    # Pad to 768 dimensions as expected by FAISS
+    return vec + [0.0] * (768 - len(vec))
 
 errors = [
     "SyntaxError: unexpected EOF while parsing main.py",
