@@ -18,8 +18,8 @@ RUN uv pip install --system fastapi uvicorn pydantic requests pygithub streamlit
 # Copy the rest of the application
 COPY . .
 
-# Expose the port for the OpenEnv Agent API
-EXPOSE 8000
+# Expose the port for the OpenEnv Agent API (Hugging Face Default)
+EXPOSE 7860
 
 # Command to natively run the FastAPI backend server mapping to the new 3-Component Pattern
-CMD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "7860"]
