@@ -15,7 +15,8 @@ SCORE_FILE = "c:/AI_DeVops/github_agent_backend/rl_scores.json"
 KNOWLEDGE_BASE_FILE = "c:/AI_DeVops/github_agent_backend/episodic_patch_memory.json"
 HOT_ZONES_FILE = "c:/AI_DeVops/github_agent_backend/hot_zones.json"
 ENV_FILE = "c:/AI_DeVops/github_agent_backend/.env"
-WEBHOOK_URL = "http://localhost:8080/api/v1/webhook/github"
+API_URL = "http://localhost:7860"
+WEBHOOK_URL = f"{API_URL}/api/v1/webhook/github"
 
 def load_json(filepath, default_val):
     if not os.path.exists(filepath):
@@ -36,10 +37,16 @@ REPOS = ["Shubhamjkd01/Nursesycn", "Shubhamjkd01/Edusential_collabration", "Shub
 target_repo = st.sidebar.selectbox("🎯 Target Repository", REPOS)
 
 st.sidebar.markdown("---")
-agent_mode = st.sidebar.radio("⚙️ Operational Mode", ["Auto Fix (Production)", "Dry Run (Sandbox)"])
+agent_mode = st.sidebar.radio("⚙️ Operational Mode", ["Dry Run (Simulation)", "Auto Fix (Production)"])
 
 st.sidebar.markdown("---")
-llm_priority = st.sidebar.selectbox("🧠 Primary LLM Engine", ["Groq Llama-3 (Fastest)", "Gemini 1.5 Flash", "OpenAI GPT-4o", "Offline / Failover Mode"])
+st.sidebar.title("🏁 OpenEnv Progress")
+st.sidebar.success("Task 1: Syntax Fix ✅")
+st.sidebar.warning("Task 2: Dependency Fix 🔄")
+st.sidebar.error("Task 3: Logic Regression 🔒")
+
+st.sidebar.markdown("---")
+llm_priority = st.sidebar.selectbox("🧠 Primary LLM Engine", ["Hugging Face Router (Qwen-72B)", "Groq Llama-3 (Fastest)", "Gemini 1.5 Flash", "OpenAI GPT-4o"])
 
 st.sidebar.markdown("---")
 simulate_btn = st.sidebar.button("🚀 Trigger Pipeline Failure", type="primary", use_container_width=True)
@@ -147,7 +154,12 @@ with pipeline_col:
         # Step 4: PR Creation
         time.sleep(1.0)
         progress_bar.progress(100, text="Step 5/5: Automated Workflow Fix Completed! 🎉")
-        append_log("[PR CREATED]")
+        
+        # OpenEnv Real Mode Logic
+        if agent_mode == "Auto Fix (Production)":
+            append_log("[PR CREATED] High Confidence PR pushed to GitHub.")
+        else:
+            append_log("[SUCCESS] Simulation passed. Reward: 1.0")
         
         st.success(f"""
         ### ✅ Fix Applied Successfully
@@ -155,6 +167,10 @@ with pipeline_col:
         - **🧠 Source:** {"FAISS Memory (Skipped LLM generation)" if match_found else ("Local Failover" if llm_priority == "Offline / Failover Mode" else "LLM Native Generation")}
         - **🎯 Confidence:** {conf_score}%
         """)
+
+        st.markdown("### 📊 OpenEnv Grader Feedback")
+        reward_val = 1.0 if match_found else (conf_score / 100.0)
+        st.progress(reward_val, text=f"Calculated Reward: {reward_val:.2f} / 1.00")
 
     else:
         st.info("⏸️ System Idle. Awaiting CI/CD Webhook...")

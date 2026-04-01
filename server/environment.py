@@ -7,6 +7,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from learning.grader import global_grader
+from agents.pr_agent import create_fix_pr
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -68,10 +70,22 @@ SyntaxError: expected ':'
         reward = float(max(0.0, min(1.0, reward)))
         
         # Build feedback based on reward
-        if reward > 0.5:
-            state_msg = f"Partial Success! Output merged into {action.file_path}."
-        elif reward == 1.0:
+        if reward == 1.0:
             state_msg = "Task Solved! PR created successfully."
+            
+            # TRIGGER REAL GITHUB PR IF IN PRODUCTION MODE
+            if os.getenv("AGENT_MODE") == "PRODUCTION":
+                try:
+                    repo = os.getenv("TARGET_REPO", "Shubhamjkd01/AI_DevOps_X")
+                    create_fix_pr(repo, {
+                        "explanation": f"Automated OpenEnv fix for {self.current_task_id}",
+                        "content": action.patch_content,
+                        "file_path": action.file_path,
+                        "confidence": reward
+                    }, self.step_count)
+                    state_msg += " (Real GitHub PR Pushed!)"
+                except Exception as e:
+                    logger.error(f"Failed to create real PR: {e}")
         else:
             state_msg = "Failed simulation sandbox format or destructive code found."
 

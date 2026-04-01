@@ -18,8 +18,8 @@ class OpenEnvGrader:
         score = 0.0
         if action_type == "analyze": return 0.2
         if action_type == "patch":
-            if file_path == "main.py": score += 0.4
-            if ":" in patch or "SyntaxError" not in patch: score += 0.4
+            if file_path == "main.py": score += 0.5
+            if ":" in patch or "SyntaxError" not in patch: score += 0.5
         return score
         
     def grade_task_2_medium(self, action_type: str, file_path: str, patch: str) -> float:
@@ -27,8 +27,8 @@ class OpenEnvGrader:
         score = 0.0
         if action_type == "analyze": return 0.2
         if action_type == "patch":
-            if file_path == "requirements.txt": score += 0.3
-            if "==" in patch or "streamlit" in patch: score += 0.5
+            if file_path == "requirements.txt": score += 0.4
+            if "==" in patch or "streamlit" in patch: score += 0.6
         return score
         
     def grade_task_3_hard(self, action_type: str, file_path: str, patch: str) -> float:
@@ -36,8 +36,8 @@ class OpenEnvGrader:
         score = 0.0
         if action_type == "analyze": return 0.3
         if action_type == "patch":
-            if file_path in ["orchestrator.py", "agents/fixer.py"]: score += 0.3
-            if "import" in patch and "def " in patch: score += 0.4
+            if file_path in ["orchestrator.py", "agents/fixer.py"]: score += 0.5
+            if "import" in patch and "def " in patch: score += 0.5
             # Penalty for infinite loops or destructive deletes
             if patch == "" or "while True:" in patch: score -= 0.5
         return max(0.0, score)

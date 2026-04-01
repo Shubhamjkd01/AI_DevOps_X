@@ -1,9 +1,14 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+import logging
 import sys
 import os
+from dotenv import load_dotenv
+load_dotenv(override=True)
 
-# Ensure root paths load for modules
+logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(name)s:%(message)s')
+logger = logging.getLogger(__name__)
+
+from fastapi import FastAPI
+from pydantic import BaseModel
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models import DevOpsAction, DevOpsObservation
