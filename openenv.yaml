@@ -1,0 +1,22 @@
+name: AI_DevOps_Agent
+version: 1.0.0
+description: Autonomous CI/CD Fixer Agent that repairs regressions and submits Pull Requests.
+entrypoint: inference.py
+dependencies:
+  - requirements.txt
+model:
+  type: language-model
+  name: ${MODEL_NAME}
+environment:
+  containerized: true
+endpoints:
+  reset: /reset
+  step: /step
+  state: /state
+tasks:
+  - id: fix_ci_workflow
+    description: Solve the AST syntax issue dynamically.
+  - id: dependency_conflict
+    description: Upgrade missing pipeline requirements.
+  - id: code_regression
+    description: Repair the destructive PR logic.
