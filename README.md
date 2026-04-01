@@ -1,3 +1,11 @@
+---
+title: "GitHub Agent Evaluator - OpenEnv"
+emoji: "🤖"
+colorFrom: "purple"
+colorTo: "blue"
+sdk: "docker"
+pinned: false
+---
 # 🚀 Enterprise AI DevOps Agent
 
 An enterprise-grade, hackathon-winning AI pipeline that natively intercepts GitHub Actions CI/CD failures, predicts bottlenecks, and deploys autonomously tested Git Diff patches directly into pull requests.
