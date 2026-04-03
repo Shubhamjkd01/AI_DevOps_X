@@ -1,0 +1,13 @@
+@echo off
+echo Activating Virtual Environment...
+call ..\.venv\Scripts\activate.bat
+
+echo Installing dependencies...
+uv pip install -r requirements.txt
+uv pip install fastapi uvicorn pydantic requests pygithub streamlit openai python-dotenv openenv
+
+echo Starting FastAPI Server in background...
+start uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+
+echo Starting ngrok tunnel...
+.\ngrok http 8080

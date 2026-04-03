@@ -38,58 +38,39 @@ def fetch_workflow_logs(repo_full_name: str, run_id: int, mock_fail_type: str = 
     """
     g = get_github_client()
     if not g:
-        logger.warning(f"No GITHUB_TOKEN. Returning mock logs for {mock_fail_type or 'syntax'}.")
-        
-        if mock_fail_type == "dependency":
-            return """
-============= CI PIPELINE LOGS =============
-Running pip install -r requirements.txt
-ERROR: Could not find a version that satisfies the requirement missing_fake_lib==9.9.9
-ERROR: No matching distribution found for missing_fake_lib==9.9.9
-            """
-        elif mock_fail_type == "test":
-            return """
-============= CI PIPELINE LOGS =============
-==================================== ERRORS ====================================
-assert sum([1, 2, 3]) == 5
-AssertionError: expected 5, got 6
-            """
-        else:
-            return """
-============= CI PIPELINE LOGS =============
-Running: pytest tests/
-==================================== ERRORS ====================================
-ImportError while importing test module 'main.py'.
-Traceback:
-  File "main.py", line 14
-    class PredictRequest(BaseModel)
-                                   ^
-SyntaxError: expected ':'
-=========================== short test summary info ============================
-ERROR tests/test_main.py
-"""
+        logger.error("No GITHUB_TOKEN provided. Cannot fetch logs.")
+        raise ValueError("GITHUB_TOKEN is missing")
 
     try:
         repo = g.get_repo(repo_full_name)
         run = repo.get_workflow_run(run_id)
         logs_url = run.logs_url
-        response = requests.get(logs_url, headers={"Authorization": f"Bearer {os.getenv('GITHUB_TOKEN')}"})
+        response = requests.get(logs_url, headers={"Authorization": f"Bearer {os.getenv('GITHUB_TOKEN')}"}, timeout=20)
         if response.status_code == 200:
-            return f"Logs successfully fetched (ZIP payload at {logs_url})"
-        return "Error downloading logs"
+            try:
+                import io
+                import zipfile
+                z = zipfile.ZipFile(io.BytesIO(response.content))
+                logs = ""
+                # Search the unzipped Action files for explicit tracebacks or failures
+                for filename in z.namelist():
+                    if filename.endswith(".txt"):
+                        content = z.read(filename).decode('utf-8', errors='ignore')
+                        if "Error" in content or "Traceback" in content or "FAILED" in content or "Exception" in content:
+                            logs += f"--- {filename} ---\n{content[-3000:]}\n\n"
+                if not logs:
+                    logs = "Workflow completed but no explicit Python Tracebacks were found in the raw logs."
+                return logs
+            except Exception as e:
+                logger.error(f"Failed to extract zip payload: {e}")
+                return "Failed to unzip logs."
+        else:
+            error_msg = f"Error downloading logs, status code: {response.status_code}"
+            logger.error(error_msg)
+            raise Exception(error_msg)
     except GithubException as e:
-        logger.warning(f"GitHub API Error (Run {run_id} not found). Injecting Real-World Mock Logs for Demo.")
-        return """
-============= CI PIPELINE LOGS =============
-Running: pytest tests/
-==================================== ERRORS ====================================
-ImportError while importing test module 'main.py'.
-Traceback:
-  File "main.py", line 14
-    class PredictRequest(BaseModel)
-                                   ^
-SyntaxError: expected ':'
-"""
+        logger.error(f"GitHub API Error: {e.data}")
+        raise e
 
 def get_file_content(repo_full_name: str, file_path: str, branch: str = "main") -> str:
     """

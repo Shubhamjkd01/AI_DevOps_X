@@ -67,7 +67,7 @@ Just the raw code so it can be written directly back to the file.
     diff = list(difflib.ndiff(current_code.splitlines(), full_code.splitlines()))
     deleted_lines = sum(1 for line in diff if line.startswith('- ') and not line.startswith('--- '))
     
-    if deleted_lines > 20:
+    if deleted_lines > 50:
         logger.warning(f"PR Validation Guard: Patch deletes {deleted_lines} lines! Rejecting patch and retrying with conservative fix.")
         conservative_prompt = prompt.replace(prompt_style, "Provide a highly conservative fix. ONLY modify the exact lines causing the error. DO NOT delete existing valid code. DO NOT wipe the file.")
         fix_content = query_llm(conservative_prompt, llm_priority)

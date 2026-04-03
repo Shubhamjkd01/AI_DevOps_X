@@ -15,7 +15,7 @@ SCORE_FILE = "c:/AI_DeVops/github_agent_backend/rl_scores.json"
 KNOWLEDGE_BASE_FILE = "c:/AI_DeVops/github_agent_backend/episodic_patch_memory.json"
 HOT_ZONES_FILE = "c:/AI_DeVops/github_agent_backend/hot_zones.json"
 ENV_FILE = "c:/AI_DeVops/github_agent_backend/.env"
-API_URL = "http://localhost:7860"
+API_URL = "http://localhost:8080"
 WEBHOOK_URL = f"{API_URL}/api/v1/webhook/github"
 
 def load_json(filepath, default_val):
@@ -49,7 +49,8 @@ st.sidebar.markdown("---")
 llm_priority = st.sidebar.selectbox("🧠 Primary LLM Engine", ["Hugging Face Router (Qwen-72B)", "Groq Llama-3 (Fastest)", "Gemini 1.5 Flash", "OpenAI GPT-4o"])
 
 st.sidebar.markdown("---")
-simulate_btn = st.sidebar.button("🚀 Trigger Pipeline Failure", type="primary", use_container_width=True)
+real_run_id = st.sidebar.text_input("🔗 Real GitHub Run ID (Leave blank to simulate)")
+simulate_btn = st.sidebar.button("🚀 Trigger Agent Execution", type="primary", use_container_width=True)
 
 # ==========================================
 # METRICS HEADER
@@ -95,7 +96,13 @@ with pipeline_col:
         sim_time = random.uniform(4.1, 6.7)
         
         # Async Backend Trigger
-        run_id = random.randint(10000, 99999)
+        mock_fail = random.choice(["syntax", "dependency", "test"])
+        if real_run_id and real_run_id.isdigit():
+            run_id = int(real_run_id)
+            mock_fail = None
+        else:
+            run_id = random.randint(10000, 99999)
+            
         try:
             requests.post(
                 WEBHOOK_URL, 
@@ -104,7 +111,7 @@ with pipeline_col:
                     "action": "completed",
                     "workflow_run": {"id": run_id, "status": "completed", "conclusion": "failure"},
                     "repository": {"full_name": target_repo},
-                    "mock_fail_type": random.choice(["syntax", "dependency", "test"]),
+                    "mock_fail_type": mock_fail,
                     "llm_priority": llm_priority
                 }, 
                 timeout=2

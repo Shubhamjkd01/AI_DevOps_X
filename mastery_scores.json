@@ -1,0 +1,9 @@
+{
+    "syntax": 0.0,
+    "dependency": 0.0,
+    "env": 0.0,
+    "architectural": 0.0,
+    "test": 0.0,
+    "ArchitecturalRegression": 0.05,
+    "MissingDependency": 0.0
+}
