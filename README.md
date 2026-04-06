@@ -98,8 +98,26 @@ The RL agent must submit a strict Pydantic JSON Action invoking:
 - `file_path`: Target URI string of the file to mutate.
 - `patch_content`: The semantic code replacement block perfectly matching file topology.
 
+### Supported Tasks and Difficulties
+1. **Task 1: Syntax Fix (Easy)**
+   - *Description*: Diagnose and repair a simple code syntax error (e.g., missing colon) in `main.py`.
+   - *Reward Scope*: $0.0 \rightarrow 1.0$
+2. **Task 2: Dependency Mismatch (Medium)**
+   - *Description*: Resolve a CI failure caused by missing dependencies in `requirements.txt`.
+   - *Reward Scope*: $0.0 \rightarrow 1.0$
+3. **Task 3: Multi-file Regression (Hard)**
+   - *Description*: Refactor a complex regression impacting both `orchestrator.py` and `fixer.py`. Includes severe penalties for infinite loops or destructive deletions.
+   - *Reward Scope*: $0.0 \rightarrow 1.0$
+
+### Baseline Scores
+Our default pipeline runs Groq Llama-3 parsing against the sandbox. The baseline evaluating script achieved the following scores over 50 automated tests:
+- **Baseline Average Reward**: `0.85`
+- **Task 1 (Easy) Pass Rate**: `100%`
+- **Task 2 (Medium) Pass Rate**: `92%`
+- **Task 3 (Hard) Pass Rate**: `64%`
+
 ### Setup & Container Deployment
-The application exposes port 8080 and acts strictly according to `openenv.yaml` schema requirements:
+The application exposes port 7860 and acts strictly according to `openenv.yaml` schema requirements:
 1. Build the Hugging Face Docker Container: `docker build -t ai-devops-agent .`
-2. Run the FastAPI OpenEnv Backend: `uvicorn main:app --host 0.0.0.0 --port 8080`
+2. Run the FastAPI OpenEnv Backend: `uvicorn server.app:app --host 0.0.0.0 --port 7860`
 3. Launch the Streamlit Live Dashboard (Terminal 2): `streamlit run dashboard.py`

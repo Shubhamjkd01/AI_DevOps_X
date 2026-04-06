@@ -7,7 +7,7 @@ uv pip install -r requirements.txt
 uv pip install fastapi uvicorn pydantic requests pygithub streamlit openai python-dotenv openenv
 
 echo Starting FastAPI Server in background...
-start uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+start uvicorn server.app:app --host 0.0.0.0 --port 7860 --reload
 
 echo Starting ngrok tunnel...
-.\ngrok http 8080
+.\ngrok http 7860

@@ -15,7 +15,7 @@ SCORE_FILE = "c:/AI_DeVops/github_agent_backend/rl_scores.json"
 KNOWLEDGE_BASE_FILE = "c:/AI_DeVops/github_agent_backend/episodic_patch_memory.json"
 HOT_ZONES_FILE = "c:/AI_DeVops/github_agent_backend/hot_zones.json"
 ENV_FILE = "c:/AI_DeVops/github_agent_backend/.env"
-API_URL = "http://localhost:8080"
+API_URL = "http://localhost:7860"
 WEBHOOK_URL = f"{API_URL}/api/v1/webhook/github"
 
 def load_json(filepath, default_val):
@@ -181,7 +181,7 @@ with pipeline_col:
 
     else:
         st.info("⏸️ System Idle. Awaiting CI/CD Webhook...")
-        st.code("Listening on http://localhost:8080/api/v1/webhook/github...\nReady for interception.", language="bash")
+        st.code("Listening on http://localhost:7860/api/v1/webhook/github...\nReady for interception.", language="bash")
 
 
 with memory_col:
@@ -210,7 +210,7 @@ if memory:
     for i, m in enumerate(reversed(memory)):
         mem_data.append({
             "RL Weight": "✅ +1.0" if m.get("accepted") else "❌ -1.0",
-            "Status": "⭐ Recent Successful Fix" if i == 0 else "Archived Iteration",
+            "Status": ("⭐ Recent Successful Fix" if m.get("accepted") else "🚨 Recent Failed Iteration") if i == 0 else "Archived Iteration",
             "Fault Category": m.get("failure_category", "Unknown"),
             "Signature Snippet": m.get("error")[:80] + "..."
         })
@@ -219,6 +219,8 @@ if memory:
     def highlight_recent(row):
         if row["Status"] == "⭐ Recent Successful Fix":
             return ['background-color: rgba(63, 185, 80, 0.2)'] * len(row)
+        elif row["Status"] == "🚨 Recent Failed Iteration":
+            return ['background-color: rgba(220, 53, 69, 0.2)'] * len(row)
         return [''] * len(row)
         
     st.dataframe(df.style.apply(highlight_recent, axis=1), use_container_width=True, hide_index=True)

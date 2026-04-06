@@ -42,6 +42,10 @@ def fetch_workflow_logs(repo_full_name: str, run_id: int, mock_fail_type: str = 
         raise ValueError("GITHUB_TOKEN is missing")
 
     try:
+        if mock_fail_type:
+            logger.info(f"Mock fail type '{mock_fail_type}' detected. Bypassing GitHub API fetch.")
+            return f"Traceback (most recent call last):\n  File \"main.py\", line 42\n    def process_request(req)\nSyntaxError: expected ':' ({mock_fail_type} simulation)"
+
         repo = g.get_repo(repo_full_name)
         run = repo.get_workflow_run(run_id)
         logs_url = run.logs_url

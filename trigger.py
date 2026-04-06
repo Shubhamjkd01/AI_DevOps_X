@@ -4,28 +4,13 @@ import sys
 
 fail_type = sys.argv[1] if len(sys.argv) > 1 else "syntax"
 
-# Multi-Repo Testing List
-REPOS = [
-    "Shubhamjkd01/Nursesycn",
-    "Shubhamjkd01/Edusential_collabration",
-    "Shubhamjkd01/edusentinel-v3"
-]
+# Single Repo Target
+selected_repo = "Shubhamjkd01/Nursesycn"
 
 print("\n--- AI DevOps Webhook Simulator ---")
-print("Select target repository to simulate a CI failure on:")
-for i, repo in enumerate(REPOS):
-    print(f"[{i+1}] {repo}")
-print("[0] Random Repository")
+print(f"Auto-targeting repository: {selected_repo}\n")
 
-choice = input("Enter your choice (0-3) [default: 0]: ").strip()
-
-if choice.isdigit() and 1 <= int(choice) <= len(REPOS):
-    selected_repo = REPOS[int(choice)-1]
-else:
-    selected_repo = random.choice(REPOS)
-    print(f"Randomly auto-selected: {selected_repo}\n")
-
-url = "http://localhost:8080/api/v1/webhook/github"
+url = "http://localhost:7860/api/v1/webhook/github"
 headers = {"X-GitHub-Event": "workflow_run"}
 run_id = random.randint(10000, 99999)
 
@@ -49,4 +34,4 @@ try:
     print(f"Triggered Fix for: {fail_type.upper()} Error")
     print("Response:", response.text)
 except requests.exceptions.ConnectionError:
-    print("Error: The server is not running on http://localhost:8080 yet.")
+    print("Error: The server is not running on http://localhost:7860 yet.")
