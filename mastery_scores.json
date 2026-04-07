@@ -6,5 +6,5 @@
     "test": 0.0,
     "ArchitecturalRegression": 0.05,
     "MissingDependency": 0.0,
-    "SyntaxError": 0.05
+    "SyntaxError": 0.0
 }

@@ -99,7 +99,7 @@ def _report_bug(description: str):
         json.dump(meta, f, indent=4)
         
     logger.info(f"Env Monitor: Creating GitHub Issue for Env Bug! Rate limit used: {meta['issues_today']}/3")
-    create_issue(repo_full_name="sweta-repo-placeholder/backend", title=f"ENV BUG: Pipeline Issue Detected", body=description, labels=["self-improvement"])
+    create_issue(repo_full_name="Shubhamjkd01/Nursesycn", title=f"ENV BUG: Pipeline Issue Detected", body=description, labels=["self-improvement"])
 
 def get_health_stats() -> dict:
     meta = {"last_issue_date": "", "issues_today": 0, "total_bugs_found": 0, "fixed": 0}

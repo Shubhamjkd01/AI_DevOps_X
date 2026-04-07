@@ -74,18 +74,25 @@ SyntaxError: expected ':'
             state_msg = "Task Solved! PR created successfully."
             
             # TRIGGER REAL GITHUB PR IF IN PRODUCTION MODE
-            if os.getenv("AGENT_MODE") == "PRODUCTION":
+            # Only create PR from /step endpoint, NOT from webhook flow (which has its own PR agent)
+            if os.getenv("AGENT_MODE") == "PRODUCTION" and action.patch_content and len(action.patch_content.strip()) > 10:
                 try:
-                    repo = os.getenv("TARGET_REPO", "Shubhamjkd01/AI_DevOps_X")
-                    create_fix_pr(repo, {
+                    repo = os.getenv("TARGET_REPO", "Shubhamjkd01/Nursesycn")
+                    fix_data = {
                         "explanation": f"Automated OpenEnv fix for {self.current_task_id}",
                         "content": action.patch_content,
-                        "file_path": action.file_path,
-                        "confidence": reward
-                    }, self.step_count)
+                        "file_path": action.file_path or "main.py",
+                        "confidence": reward,
+                        "priority": "HIGH",
+                        "conf_reason": "OpenEnv grader score 1.0",
+                        "patch_explanation": f"Fix applied via OpenEnv step endpoint for {self.current_task_id}",
+                        "needs_refactor": False
+                    }
+                    create_fix_pr(repo, fix_data, self.step_count)
                     state_msg += " (Real GitHub PR Pushed!)"
                 except Exception as e:
                     logger.error(f"Failed to create real PR: {e}")
+                    state_msg += " (PR creation failed, fix still validated)"
         else:
             state_msg = "Failed simulation sandbox format or destructive code found."
 
