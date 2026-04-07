@@ -8,11 +8,13 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 from client import GitHubAgentEnv, DevOpsAction
 
-IMAGE_NAME = os.getenv("IMAGE_NAME") # If you are using docker image 
-API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
+API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
+MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
+HF_TOKEN = os.getenv("HF_TOKEN")
 
-API_BASE_URL = os.getenv("API_BASE_URL") or "https://router.huggingface.co/v1"
-MODEL_NAME = os.getenv("MODEL_NAME") or "Qwen/Qwen2.5-72B-Instruct"
+# Optional - if you use from_docker_image():
+LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME", "github_agent_backend:latest")
+
 TASK_NAME = os.getenv("GITHUB_AGENT_TASK", "fix_ci_workflow")
 BENCHMARK = os.getenv("GITHUB_AGENT_BENCHMARK", "devops_eval")
 MAX_STEPS = 5
@@ -86,9 +88,9 @@ def get_model_action(client: OpenAI, step: int, ci_logs: str, last_reward: float
 
 
 async def main() -> None:
-    client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
 
-    env = await GitHubAgentEnv.from_docker_image(IMAGE_NAME)
+    env = await GitHubAgentEnv.from_docker_image(LOCAL_IMAGE_NAME)
 
     rewards: List[float] = []
     steps_taken = 0
