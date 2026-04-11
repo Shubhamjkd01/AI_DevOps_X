@@ -28,7 +28,10 @@ action_space:
 tasks:
   - id: fix_ci_workflow
     description: Solve the AST syntax issue dynamically.
+    grader: learning.grader:openenv_task1_grader
   - id: dependency_conflict
     description: Upgrade missing pipeline requirements.
+    grader: learning.grader:openenv_task2_grader
   - id: code_regression
     description: Repair the destructive PR logic.
+    grader: learning.grader:openenv_task3_grader
