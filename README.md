@@ -70,6 +70,36 @@ end
 O -.-> LOOP
 ```
 
+### 🧬 OpenEnv Evaluation Flow (Hackathon Architecture)
+```mermaid
+sequenceDiagram
+    participant V as Scaler Validator
+    participant I as inference.py (Root)
+    participant E as FastAPI Environment
+    participant G as Grader Modules
+    
+    V->>I: Execute inference.py (API_BASE_URL, MODEL_NAME)
+    
+    loop For task_1, task_2, task_3
+        I->>I: Emit [START] task_log
+        I->>E: POST /reset
+        E-->>I: Return Initial State & CI Logs
+        
+        loop Max 5 Steps
+            I->>I: LLM Analysis (Groq/Llama-3)
+            I->>E: POST /step (Action JSON)
+            E-->>I: Action Applied & Step Reward Generated
+            I->>I: Emit [STEP] rewards & observations
+        end
+        
+        I->>I: Emit [END] final_score log
+    end
+    
+    V->>G: Parse STDOUT -> Map to openenv.yaml tasks
+    G-->>V: Execute tasks.task_X.grader:grade
+    V->>V: Deep Validation Success!
+```
+
 ### 🚀 Step-by-Step Execution Process
 1. **Detection:** The pipeline crashes on GitHub. Our API intercepts the failure webhook dynamically across repos.
 2. **Analysis:** The Analyzer categorizes the error (e.g., `SyntaxError`) and checks for *Hot Zones* (files that fail repeatedly).
