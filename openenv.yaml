@@ -25,6 +25,7 @@ action_space:
     action_type: string
     file_path: string (optional)
     patch_content: string (optional)
+reward_range: [0.05, 0.95]
 tasks:
   - id: fix_ci_workflow
     description: Solve the AST syntax issue dynamically.

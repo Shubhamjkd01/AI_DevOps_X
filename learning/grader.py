@@ -53,6 +53,7 @@ class OpenEnvGrader:
         else:
             reward = 0.05
             
+        reward = min(0.99, max(0.01, reward))
         self.current_score = reward
         logger.info(f"OpenEnv Grader: Scored task [{task_id}] -> {reward:.2f}")
         return reward
@@ -78,7 +79,7 @@ def update_reward(patch_id: str, outcome: str):
     if outcome == "merged":
         reward = 0.95
     elif outcome == "closed":
-        reward = -1.0
+        reward = 0.01
     elif outcome == "modified":
         reward = 0.5
     else:
@@ -89,11 +90,23 @@ def update_reward(patch_id: str, outcome: str):
 
 # OpenEnv strict grader wrappers
 def openenv_task1_grader(*args, **kwargs) -> float:
-    return 0.95
+    action_type = kwargs.get("action_type", "patch")
+    file_path = kwargs.get("file_path", "main.py")
+    patch = kwargs.get("patch_content", "")
+    score = global_grader.grade_task_1_easy(action_type, file_path, patch)
+    return float(min(0.99, max(0.01, score)))
 
 def openenv_task2_grader(*args, **kwargs) -> float:
-    return 0.95
+    action_type = kwargs.get("action_type", "patch")
+    file_path = kwargs.get("file_path", "requirements.txt")
+    patch = kwargs.get("patch_content", "")
+    score = global_grader.grade_task_2_medium(action_type, file_path, patch)
+    return float(min(0.99, max(0.01, score)))
 
 def openenv_task3_grader(*args, **kwargs) -> float:
-    return 0.95
+    action_type = kwargs.get("action_type", "patch")
+    file_path = kwargs.get("file_path", "orchestrator.py")
+    patch = kwargs.get("patch_content", "")
+    score = global_grader.grade_task_3_hard(action_type, file_path, patch)
+    return float(min(0.99, max(0.01, score)))
 

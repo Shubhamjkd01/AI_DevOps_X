@@ -65,12 +65,12 @@ SyntaxError: expected ':'
             patch=action.patch_content or ""
         )
         
-        # STRICT HACKATHON ENFORCEMENT: Clamp reward completely to [0.0, 1.0]
+        # STRICT HACKATHON ENFORCEMENT: Clamp reward completely to [0.01, 0.99]
         # Any negative reward (-1.0) will result in automatic disqualification!
-        reward = float(max(0.0, min(1.0, reward)))
+        reward = float(max(0.01, min(0.99, reward)))
         
         # Build feedback based on reward
-        if reward == 1.0:
+        if reward >= 0.99:
             state_msg = "Task Solved! PR created successfully."
             
             # TRIGGER REAL GITHUB PR IF IN PRODUCTION MODE
@@ -96,8 +96,8 @@ SyntaxError: expected ':'
         else:
             state_msg = "Failed simulation sandbox format or destructive code found."
 
-        self.is_done = (reward >= 1.0) or (self.step_count >= self.max_steps)
-        error_msg = None if reward > 0.0 else f"Sandbox reject: {action.action_type} executed improperly."
+        self.is_done = (reward >= 0.99) or (self.step_count >= self.max_steps)
+        error_msg = None if reward > 0.05 else f"Sandbox reject: {action.action_type} executed improperly."
         
         obs = DevOpsObservation(
             system_state=state_msg,
