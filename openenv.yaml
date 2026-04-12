@@ -27,12 +27,12 @@ action_space:
     patch_content: string (optional)
 reward_range: [0.05, 0.95]
 tasks:
-  - id: fix_ci_workflow
+  - id: task_1
     description: Solve the AST syntax issue dynamically.
     grader: learning.grader:openenv_task1_grader
-  - id: dependency_conflict
+  - id: task_2
     description: Upgrade missing pipeline requirements.
     grader: learning.grader:openenv_task2_grader
-  - id: code_regression
+  - id: task_3
     description: Repair the destructive PR logic.
     grader: learning.grader:openenv_task3_grader

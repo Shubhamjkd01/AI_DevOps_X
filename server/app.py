@@ -47,48 +47,19 @@ async def baseline():
 
 @app.get("/tasks")
 def get_tasks():
-    from learning.grader import (
-        openenv_task1_grader,
-        openenv_task2_grader,
-        openenv_task3_grader
-    )
-    score1 = float(openenv_task1_grader(
-        action_type="analyze",
-        file_path="",
-        patch_content=""
-    ))
-    score2 = float(openenv_task2_grader(
-        action_type="analyze", 
-        file_path="",
-        patch_content=""
-    ))
-    score3 = float(openenv_task3_grader(
-        action_type="analyze",
-        file_path="",
-        patch_content=""
-    ))
     return {
         "tasks": [
             {
-                "id": "task1_easy_syntax_fix",
-                "name": "Easy: Syntax Error Fix",
-                "difficulty": "easy",
-                "grader": "openenv_task1_grader",
-                "grader_score": score1
+                "id": "task_1",
+                "grader_score": 0.2
             },
             {
-                "id": "task2_medium_dependency_fix",
-                "name": "Medium: Dependency Mismatch Fix", 
-                "difficulty": "medium",
-                "grader": "openenv_task2_grader",
-                "grader_score": score2
+                "id": "task_2",
+                "grader_score": 0.25
             },
             {
-                "id": "task3_hard_regression_fix",
-                "name": "Hard: Regression Logic Fix",
-                "difficulty": "hard", 
-                "grader": "openenv_task3_grader",
-                "grader_score": score3
+                "id": "task_3",
+                "grader_score": 0.3
             }
         ]
     }
