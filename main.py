@@ -83,6 +83,7 @@ class TaskDef(BaseModel):
     task_id: str
     difficulty: str
     description: str
+    grader: str = ""
 
 @app.post("/api/v1/env/reset", response_model=Observation)
 def env_reset():
@@ -126,9 +127,9 @@ def env_state():
 def get_tasks():
     return {
         "tasks": [
-            TaskDef(task_id="task_1", difficulty="easy", description="Fix Python syntax error in main.py"),
-            TaskDef(task_id="task_2", difficulty="medium", description="Resolve dependency mismatch in requirements.txt"),
-            TaskDef(task_id="task_3", difficulty="hard", description="Refactor breaking regression across multiple orchestrator files")
+            TaskDef(task_id="task_1", difficulty="easy", description="Fix Python syntax error in main.py", grader="tasks.task_1.grader:grade"),
+            TaskDef(task_id="task_2", difficulty="medium", description="Resolve dependency mismatch in requirements.txt", grader="tasks.task_2.grader:grade"),
+            TaskDef(task_id="task_3", difficulty="hard", description="Refactor breaking regression across multiple orchestrator files", grader="tasks.task_3.grader:grade")
         ],
         "action_schema": {
             "action_type": "string (e.g. 'analyze', 'patch')",

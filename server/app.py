@@ -51,17 +51,26 @@ def get_tasks():
         "tasks": [
             {
                 "id": "task_1",
-                "grader": "learning.grader:openenv_task1_grader",
+                "name": "Easy Syntax Error Fix",
+                "description": "Solve the AST syntax issue dynamically.",
+                "difficulty": "easy",
+                "grader": "tasks.task_1.grader:grade",
                 "grader_score": 0.2
             },
             {
                 "id": "task_2",
-                "grader": "learning.grader:openenv_task2_grader",
+                "name": "Medium Dependency Mismatch Fix",
+                "description": "Upgrade missing pipeline requirements.",
+                "difficulty": "medium",
+                "grader": "tasks.task_2.grader:grade",
                 "grader_score": 0.25
             },
             {
                 "id": "task_3",
-                "grader": "learning.grader:openenv_task3_grader",
+                "name": "Hard Regression Logic Fix",
+                "description": "Repair the destructive PR logic.",
+                "difficulty": "hard",
+                "grader": "tasks.task_3.grader:grade",
                 "grader_score": 0.3
             }
         ]

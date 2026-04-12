@@ -1,6 +1,6 @@
-name: AI_DevOps_Agent
-version: 1.0.0
-description: Autonomous CI/CD Fixer Agent that repairs regressions and submits Pull Requests.
+version: "1.0"
+name: "AI_DevOps_Agent"
+description: "Autonomous CI/CD Fixer Agent that repairs regressions and submits Pull Requests."
 entrypoint: inference.py
 dependencies:
   - requirements.txt
@@ -25,14 +25,20 @@ action_space:
     action_type: string
     file_path: string (optional)
     patch_content: string (optional)
-reward_range: [0.05, 0.95]
+reward_range: [0.1, 0.99]
 tasks:
-  - id: task_1
-    description: Solve the AST syntax issue dynamically.
-    grader: learning.grader:openenv_task1_grader
-  - id: task_2
-    description: Upgrade missing pipeline requirements.
-    grader: learning.grader:openenv_task2_grader
-  - id: task_3
-    description: Repair the destructive PR logic.
-    grader: learning.grader:openenv_task3_grader
+  - id: "task_1"
+    name: "Easy Syntax Error Fix"
+    description: "Solve the AST syntax issue dynamically."
+    difficulty: "easy"
+    grader: "tasks.task_1.grader:grade"
+  - id: "task_2"
+    name: "Medium Dependency Mismatch Fix"
+    description: "Upgrade missing pipeline requirements."
+    difficulty: "medium"
+    grader: "tasks.task_2.grader:grade"
+  - id: "task_3"
+    name: "Hard Regression Logic Fix"
+    description: "Repair the destructive PR logic."
+    difficulty: "hard"
+    grader: "tasks.task_3.grader:grade"
