@@ -51,14 +51,17 @@ def get_tasks():
         "tasks": [
             {
                 "id": "task_1",
+                "grader": "learning.grader:openenv_task1_grader",
                 "grader_score": 0.2
             },
             {
                 "id": "task_2",
+                "grader": "learning.grader:openenv_task2_grader",
                 "grader_score": 0.25
             },
             {
                 "id": "task_3",
+                "grader": "learning.grader:openenv_task3_grader",
                 "grader_score": 0.3
             }
         ]
