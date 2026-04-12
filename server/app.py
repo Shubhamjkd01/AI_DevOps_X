@@ -53,19 +53,19 @@ def get_tasks():
         openenv_task3_grader
     )
     score1 = float(openenv_task1_grader(
-        action_type="patch",
-        file_path="main.py", 
-        patch_content="def main():"
+        action_type="analyze",
+        file_path="",
+        patch_content=""
     ))
     score2 = float(openenv_task2_grader(
-        action_type="patch",
-        file_path="requirements.txt",
-        patch_content="streamlit==1.28.0"
+        action_type="analyze", 
+        file_path="",
+        patch_content=""
     ))
     score3 = float(openenv_task3_grader(
-        action_type="patch",
-        file_path="orchestrator.py",
-        patch_content="import os\ndef fix():"
+        action_type="analyze",
+        file_path="",
+        patch_content=""
     ))
     return {
         "tasks": [

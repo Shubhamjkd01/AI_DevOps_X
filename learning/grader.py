@@ -25,7 +25,7 @@ class OpenEnvGrader:
     def grade_task_2_medium(self, action_type: str, file_path: str, patch: str) -> float:
         """Task 2: Dependency Mismatch (requirements.txt failure)"""
         score = 0.05
-        if action_type == "analyze": return 0.2
+        if action_type == "analyze": return 0.25
         if action_type == "patch":
             if file_path == "requirements.txt": score += 0.4
             if "==" in patch or "streamlit" in patch: score += 0.6
@@ -90,23 +90,23 @@ def update_reward(patch_id: str, outcome: str):
 
 # OpenEnv strict grader wrappers
 def openenv_task1_grader(*args, **kwargs) -> float:
-    action_type = kwargs.get("action_type", "patch")
-    file_path = kwargs.get("file_path", "main.py")
+    action_type = kwargs.get("action_type", "analyze")
+    file_path = kwargs.get("file_path", "")
     patch = kwargs.get("patch_content", "")
     score = global_grader.grade_task_1_easy(action_type, file_path, patch)
-    return float(min(0.99, max(0.01, score)))
+    return float(min(0.88, max(0.05, score)))
 
 def openenv_task2_grader(*args, **kwargs) -> float:
-    action_type = kwargs.get("action_type", "patch")
-    file_path = kwargs.get("file_path", "requirements.txt")
+    action_type = kwargs.get("action_type", "analyze")
+    file_path = kwargs.get("file_path", "")
     patch = kwargs.get("patch_content", "")
     score = global_grader.grade_task_2_medium(action_type, file_path, patch)
-    return float(min(0.99, max(0.01, score)))
+    return float(min(0.72, max(0.05, score)))
 
 def openenv_task3_grader(*args, **kwargs) -> float:
-    action_type = kwargs.get("action_type", "patch")
-    file_path = kwargs.get("file_path", "orchestrator.py")
+    action_type = kwargs.get("action_type", "analyze")
+    file_path = kwargs.get("file_path", "")
     patch = kwargs.get("patch_content", "")
     score = global_grader.grade_task_3_hard(action_type, file_path, patch)
-    return float(min(0.99, max(0.01, score)))
+    return float(min(0.55, max(0.05, score)))
 
