@@ -87,17 +87,13 @@ def get_model_action(client: OpenAI, step: int, ci_logs: str, last_reward: float
         return DevOpsAction(action_type="analyze", file_path="main.py", patch_content="")
 
 
-async def main() -> None:
-    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
-
-    env = await GitHubAgentEnv.from_docker_image(LOCAL_IMAGE_NAME)
-
+async def evaluate_task(task_id: str, client: OpenAI, env: GitHubAgentEnv) -> None:
     rewards: List[float] = []
     steps_taken = 0
     score = 0.0
     success = False
 
-    log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
+    log_start(task=task_id, env=BENCHMARK, model=MODEL_NAME)
 
     try:
         result = await env.reset()
@@ -110,10 +106,8 @@ async def main() -> None:
 
             action = get_model_action(client, step, last_logs, last_reward)
             
-            # Action string without line breaks for correct parsing
             action_str = f"patch('{action.file_path}')" if action.action_type == "patch" else "analyze_env()"
 
-            # Evaluate step execution
             result = await env.step(action)
             obs = result.observation
             reward = result.reward or 0.0
@@ -131,18 +125,29 @@ async def main() -> None:
             if done:
                 break
 
-        # Max total score possible logic
         score = sum(rewards) / len(rewards) if rewards else 0.0
         score = min(max(score, 0.0), 1.0)
         success = score >= SUCCESS_SCORE_THRESHOLD
+    except Exception as e:
+        print(f"[DEBUG] Evaluation error for {task_id}: {e}", flush=True)
+    finally:
+        log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
 
+
+async def main() -> None:
+    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
+    env = await GitHubAgentEnv.from_docker_image(LOCAL_IMAGE_NAME)
+    
+    tasks_to_run = ["task_1", "task_2", "task_3"]
+    
+    try:
+        for t in tasks_to_run:
+            await evaluate_task(t, client, env)
     finally:
         try:
             await env.close()
         except Exception as e:
             print(f"[DEBUG] env.close() error: {e}", flush=True)
-            
-        log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
 
 
 if __name__ == "__main__":
