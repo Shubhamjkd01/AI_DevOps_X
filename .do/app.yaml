@@ -1,0 +1,27 @@
+name: ai-devops-agent
+region: nyc
+services:
+  - name: backend
+    dockerfilePath: Dockerfile
+    http_port: 7860
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    envs:
+      - key: GEMINI_API_KEY
+        type: SECRET
+        description: "Google Gemini API key powering Gemma 2 open-weights model"
+      - key: GITHUB_TOKEN
+        type: SECRET
+        description: "GitHub Personal Access Token for automated PR deployment"
+      - key: DRY_RUN_MODE
+        value: "false"
+      - key: TARGET_REPO
+        value: "Shubhamjkd01/AI_DevOps_X"
+      - key: HF_TOKEN
+        type: SECRET
+        description: "Optional Hugging Face token for secondary open-weight fallback"
+      - key: OPENAI_API_KEY
+        type: SECRET
+        description: "Optional OpenAI key for third-tier fallback"
