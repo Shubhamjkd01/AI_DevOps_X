@@ -46,7 +46,7 @@ st.sidebar.warning("Task 2: Dependency Fix 🔄")
 st.sidebar.error("Task 3: Logic Regression 🔒")
 
 st.sidebar.markdown("---")
-llm_priority = st.sidebar.selectbox("🧠 Primary LLM Engine", ["Hugging Face Router (Qwen-72B)", "Groq Llama-3 (Fastest)", "Gemini 1.5 Flash", "OpenAI GPT-4o"])
+llm_priority = st.sidebar.selectbox("🧠 Primary LLM Engine", ["Google Gemma 4 (Primary)", "Hugging Face Router", "Groq Llama-3 (Fastest)", "Gemini 1.5 Flash", "Offline / Failover Mode"])
 
 st.sidebar.markdown("---")
 real_run_id = st.sidebar.text_input("🔗 Real GitHub Run ID (Leave blank to simulate)")
