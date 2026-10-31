@@ -3,8 +3,8 @@ import json
 import os
 from services.llm import query_llm
 
-logger = logging.getLogger(__name__)
-HOT_ZONES_FILE = "c:/AI_DeVops/github_agent_backend/hot_zones.json"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HOT_ZONES_FILE = os.path.join(BASE_DIR, "hot_zones.json")
 
 def track_failure_trend(file_path: str) -> bool:
     if not file_path: return False

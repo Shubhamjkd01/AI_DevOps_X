@@ -7,8 +7,9 @@ from services.github import create_issue
 
 logger = logging.getLogger(__name__)
 
-FAIL_FILE = "c:/AI_DeVops/github_agent_backend/failure_patterns.json"
-META_FILE = "c:/AI_DeVops/github_agent_backend/env_metadata.json"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FAIL_FILE = os.path.join(BASE_DIR, "failure_patterns.json")
+META_FILE = os.path.join(BASE_DIR, "env_metadata.json")
 
 def log_failure(error_reason: str, command_tried: str, error_response: str):
     logger.info("Env Monitor: Logging failure to failure_patterns.json")

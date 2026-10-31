@@ -1,12 +1,16 @@
 @echo off
-echo ==========================================
-echo   Starting AI DevOps Agent Services
-echo ==========================================
+echo ========================================================
+echo   AIDEVOPS - Windows 1-Click Startup Launcher
+echo ========================================================
 echo.
-echo 1. Starting FastAPI Webhook Backend on port 7860...
-start "AI DevOps Backend" cmd /k "python -m uvicorn server.app:app --host 0.0.0.0 --port 7860"
 
-echo 2. Starting Streamlit Dashboard on port 8501...
-start "AI DevOps Dashboard" cmd /k "streamlit run dashboard.py"
+if not exist ".env" (
+    if exist ".env.example" (
+        copy .env.example .env
+        echo [*] Created .env from .env.example.
+        echo [*] Please edit .env with your GEMINI_API_KEY and GITHUB_TOKEN!
+    )
+)
 
-echo Services running! Check the opened terminal windows.
+python run_local.py
+pause

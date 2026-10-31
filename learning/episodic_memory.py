@@ -8,7 +8,8 @@ from services.llm import get_embedding
 
 logger = logging.getLogger(__name__)
 
-KNOWLEDGE_BASE_FILE = "c:/AI_DeVops/github_agent_backend/episodic_patch_memory.json"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+KNOWLEDGE_BASE_FILE = os.path.join(BASE_DIR, "episodic_patch_memory.json")
 PRE_WARMED_CONTEXT = {}
 
 # Global FAISS index and metadata

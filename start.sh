@@ -1,9 +1,15 @@
-#!/bin/bash
-echo "Installing dependencies via uv..."
-uv sync
+#!/usr/bin/env bash
+echo "========================================================"
+echo "  AIDEVOPS - Linux / macOS Startup Launcher"
+echo "========================================================"
+echo ""
 
-echo "Starting FastAPI Server..."
-uv run uvicorn main:app --host 0.0.0.0 --port 8080 --reload &
+if [ ! -f ".env" ]; then
+    if [ -f ".env.example" ]; then
+        cp .env.example .env
+        echo "[*] Created .env from .env.example."
+        echo "[*] Please edit .env with your GEMINI_API_KEY and GITHUB_TOKEN!"
+    fi
+fi
 
-echo "Starting ngrok tunnel..."
-ngrok http 8080
+python3 run_local.py

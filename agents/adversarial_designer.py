@@ -5,7 +5,8 @@ from services.llm import query_llm
 
 logger = logging.getLogger(__name__)
 
-MASTERY_FILE = "c:/AI_DeVops/github_agent_backend/mastery_scores.json"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MASTERY_FILE = os.path.join(BASE_DIR, "mastery_scores.json")
 
 def get_weakest_category() -> str:
     default_scores = {
@@ -69,7 +70,7 @@ Format your output strictly as a JSON list of objects:
         logger.info(f"Adversarial Designer: Successfully generated {len(scenarios)} compound adversarial scenarios.")
         
         # Save them to an adversarial queue file
-        queue_file = "c:/AI_DeVops/github_agent_backend/adversarial_queue.json"
+        queue_file = os.path.join(BASE_DIR, "adversarial_queue.json")
         
         queue = []
         if os.path.exists(queue_file):

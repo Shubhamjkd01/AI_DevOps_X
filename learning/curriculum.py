@@ -2,9 +2,8 @@ import json
 import os
 import logging
 
-logger = logging.getLogger(__name__)
-
-MASTERY_FILE = "c:/AI_DeVops/github_agent_backend/mastery_scores.json"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MASTERY_FILE = os.path.join(BASE_DIR, "mastery_scores.json")
 
 class CurriculumController:
     def __init__(self):

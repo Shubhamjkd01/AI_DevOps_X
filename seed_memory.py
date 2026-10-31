@@ -38,6 +38,7 @@ for e in errors:
         "accepted": True
     })
 
-with open("c:/AI_DeVops/github_agent_backend/episodic_patch_memory.json", "w") as f:
+output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "episodic_patch_memory.json")
+with open(output_path, "w") as f:
     json.dump(memory, f, indent=4)
 print("Seeded 15 episodic memory instances deterministically!")

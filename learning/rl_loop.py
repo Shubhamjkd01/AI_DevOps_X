@@ -4,8 +4,9 @@ import os
 
 logger = logging.getLogger(__name__)
 
-SCORE_FILE = "c:/AI_DeVops/github_agent_backend/rl_scores.json"
-KNOWLEDGE_BASE_FILE = "c:/AI_DeVops/github_agent_backend/knowledge_base.json"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SCORE_FILE = os.path.join(BASE_DIR, "rl_scores.json")
+KNOWLEDGE_BASE_FILE = os.path.join(BASE_DIR, "knowledge_base.json")
 
 def get_knowledge_base():
     if not os.path.exists(KNOWLEDGE_BASE_FILE):
