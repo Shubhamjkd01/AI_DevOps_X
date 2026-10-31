@@ -1,7 +1,3 @@
-Further improvement goinig 
-
-
-
 ---
 title: "GitHub Agent Evaluator - OpenEnv"
 emoji: "🤖"
@@ -9,26 +5,23 @@ colorFrom: "purple"
 colorTo: "blue"
 sdk: "docker"
 pinned: false
-
-
-add worklflow
 ---
 
 # 🚀 Enterprise AI DevOps Agent
 
 [![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/Shubhamjkd01/AI_DevOps_X)
-[![Powered by Gemma](https://img.shields.io/badge/Model-Google%20Gemma%202%20(Open%20Weights)-blue.svg)](https://ai.google.dev/gemma)
+[![Powered by Gemma 4](https://img.shields.io/badge/Model-Google%20Gemma%204%20(Open%20Weights)-blue.svg)](https://ai.google.dev/gemma)
 [![DigitalOcean Ready](https://img.shields.io/badge/Deploy-DigitalOcean%20App%20Platform-0080FF.svg)](https://www.digitalocean.com/products/app-platform)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An autonomous, self-healing AI DevOps engineer that natively intercepts **GitHub Actions CI/CD failures**, performs deep log triage using Google's open-weights **Gemma 2** (via the Gemini API), validates code syntax against strict AST hallucination guards, tests regressions in an isolated sandbox, and automatically submits verified Pull Request patches.
+An autonomous, self-healing AI DevOps engineer that natively intercepts **GitHub Actions CI/CD failures**, performs deep log triage using Google's state-of-the-art open-weights **Gemma 4** (via the Gemini API), validates code syntax against strict AST hallucination guards, tests regressions in an isolated sandbox, and automatically submits verified Pull Request patches.
 
 ---
 
 ## 🎯 The Problem We Solve
 * **The Pain Point:** Every modern software engineering team relies on CI/CD pipelines. Yet, pipelines break constantly—due to simple syntax errors, unpinned package conflicts, or accidental regressions.
 * **The Cost:** Developers waste an average of **4 to 6 hours every week** sifting through thousands of lines of messy terminal output, interrupting deep work just to fix trivial bugs.
-* **The Solution:** An on-call AI agent running 24/7 on **DigitalOcean App Platform**. It listens to GitHub Actions crash webhooks, understands the failure context using **Gemma**, writes a minimal patch, verifies zero regressions, and opens a ready-to-merge PR—without any human debugging needed.
+* **The Solution:** An on-call AI agent running 24/7 on **DigitalOcean App Platform**. It listens to GitHub Actions crash webhooks, understands the failure context using **Gemma 4**, writes a minimal patch, verifies zero regressions, and opens a ready-to-merge PR—without any human debugging needed.
 
 ---
 
@@ -36,12 +29,12 @@ An autonomous, self-healing AI DevOps engineer that natively intercepts **GitHub
 
 ### 1. 🔵 DigitalOcean: Best Open-Source AI Project
 * **Native DigitalOcean App Platform Integration:** Configured with [`.do/app.yaml`](.do/app.yaml) for 1-click cloud deployment. Runs the 24/7 webhook listener and metrics dashboard with zero server maintenance.
-* **Open-Source & Open-Weights:** Built entirely on open-source frameworks (FastAPI, FAISS, PyGithub) powered by open-weight LLMs (Google Gemma 2, Llama 3.1, Mistral).
+* **Open-Source & Open-Weights:** Built entirely on open-source frameworks (FastAPI, FAISS, PyGithub) powered by open-weight LLMs (Google Gemma 4, Llama 3.1, Mistral).
 * **Enterprise CI/CD Impact:** Provides tangible ROI by reducing Mean Time to Repair (MTTR) and calculating direct developer dollar savings in real-time.
 
-### 2. 💎 Best Use of Gemma (Google Open-Weights via Gemini API)
-* **Core Agent Brain:** Leverages Google's lightweight, state-of-the-art open-weights **Gemma 2 (`gemma-2-9b-it` / `gemma-2-27b-it`)** via the Gemini API as the primary reasoning engine.
-* **Specialized Agent Roles Powered by Gemma:**
+### 2. 💎 Best Use of Gemma 4 (Google Open-Weights via Gemini API)
+* **Core Agent Brain:** Leverages Google's latest open-weights **Gemma 4 (`models/gemma-4-26b-a4b-it` / `models/gemma-4-31b-it`)** via the Gemini API as the primary reasoning engine.
+* **Specialized Agent Roles Powered by Gemma 4:**
   1. **Analyzer Agent:** Analyzes raw stack traces, identifies failure categories, and maps issues to physical repository file trees.
   2. **Fixer Agent:** Generates minimal, context-aware code diffs using episodic vector memory.
   3. **3-Tier Judge:** Implements adaptive code review personas (Junior, Senior, Principal) to score patch quality before PR creation.
@@ -65,12 +58,12 @@ subgraph TRIGGER [GitHub Actions CI/CD]
     B -->|Webhook POST| API
 end
 
-%% Gemma Reasoning Engine
-subgraph BRAIN [Gemma 2 Agentic Engine via Gemini API]
+%% Gemma 4 Reasoning Engine
+subgraph BRAIN [Gemma 4 Agentic Engine via Gemini API]
     API --> O[[Orchestrator Engine]]
-    O --> AN[Analyzer Agent - Gemma 2]
+    O --> AN[Analyzer Agent - Gemma 4]
     AN -->|Query Error Signature| MEM[(FAISS Vector Memory)]
-    MEM -->|Nearest Successful Fixes| FX[Fixer Agent - Gemma 2]
+    MEM -->|Nearest Successful Fixes| FX[Fixer Agent - Gemma 4]
     FX -->|Synthesized Patch| VAL[Validator Agent]
 end
 
@@ -79,7 +72,7 @@ subgraph DEFENSE [Enterprise Safety Guardrails]
     VAL -->|AST Parse| HG{Hallucination Guard}
     HG -->|Block Dangerous Imports| REJECT[Reject & Log]
     HG -->|Pass| SBX[Sandbox Regression Runner]
-    SBX --> JUDGE[3-Tier LLM Judge - Gemma 2]
+    SBX --> JUDGE[3-Tier LLM Judge - Gemma 4]
 end
 
 %% Deployment & Feedback
@@ -97,8 +90,8 @@ end
 
 ## 🧬 Key Differentiating Features
 
-1. **Gemma 2 Cascading Resilience:**
-   * Primary: Google Gemma 2 (`gemma-2-9b-it`) accessed via Gemini API.
+1. **Gemma 4 Cascading Resilience:**
+   * Primary: Google Gemma 4 (`models/gemma-4-26b-a4b-it` / `models/gemma-4-31b-it`) accessed via Gemini API.
    * Secondary Failovers: Hugging Face Router → Groq Llama-3.1 → Deterministic Mock Fallback (ensures 100% uptime during grading).
 2. **FAISS Episodic Vector Memory:**
    * Stores 768-dimensional embeddings of past error signatures and verified patches.
@@ -123,7 +116,7 @@ github_agent_backend/
 ├── learning/             # FAISS Episodic Memory, Curriculum, & RL loop
 ├── routes/               # GitHub Webhooks & Prediction API
 ├── server/               # OpenEnv FastAPI runtime (server/app.py)
-├── services/             # GitHub API & Gemma/Gemini LLM engine
+├── services/             # GitHub API & Gemma 4 LLM engine
 ├── tasks/                # OpenEnv benchmark task suites (task_1, task_2, task_3)
 ├── tests/                # Organized unit and integration tests
 ├── scripts/              # Operational & PR cleanup utilities
@@ -153,8 +146,8 @@ Click the button below to launch directly onto DigitalOcean App Platform using o
 
 2. **Configure Environment (`.env`):**
    ```ini
-   GEMINI_API_KEY="your_gemini_api_key"    # Powers Gemma 2
-   GITHUB_TOKEN="ghp_your_github_token"    # For PR creation
+   GEMMA_API_KEY="your_api_key_from_google_ai_studio"   # Powers Gemma 4
+   GITHUB_TOKEN="ghp_your_github_token"                 # For PR creation
    TARGET_REPO="owner/repo"
    DRY_RUN_MODE="false"
    ```
