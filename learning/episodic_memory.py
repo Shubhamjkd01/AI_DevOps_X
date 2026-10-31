@@ -103,9 +103,11 @@ def penalize_latest_patch():
             json.dump(metadata, f, indent=4)
         logger.info("Rollback Agent: Penalized the most recent AI patch in FAISS memory.")
 
-def save_patch_memory(error: str, patch: str, reward: float = 1.0, failure_category: str = "Unknown", pr_url: str = ""):
+def save_patch_memory(error: str, patch: str, reward: float = 1.0, failure_category: str = "Unknown", pr_url: str = "", model_used: str = ""):
     global index, metadata
     emb = get_embedding(error)
+    from services.llm import get_last_model_used
+    resolved_model = model_used or get_last_model_used()
     
     entry = {
         "error": error,
@@ -114,7 +116,8 @@ def save_patch_memory(error: str, patch: str, reward: float = 1.0, failure_categ
         "reward": reward,
         "accepted": reward > 0.0,
         "failure_category": failure_category,
-        "pr_url": pr_url
+        "pr_url": pr_url,
+        "model_used": resolved_model
     }
     
     metadata.append(entry)

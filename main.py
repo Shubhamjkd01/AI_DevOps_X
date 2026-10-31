@@ -159,6 +159,33 @@ def get_dashboard():
     # Redirect to streamlit dashboard
     return {"status": "redirect", "message": "Dashboard migrated to Streamlit. Please run `streamlit run dashboard.py` on your terminal and navigate to port 8501."}
 
+@app.get("/health")
+def get_health():
+    from services.llm import get_last_model_used, get_active_model_name
+    return {
+        "status": "healthy",
+        "model_used": get_last_model_used(),
+        "primary_model": get_active_model_name()
+    }
+
+from fastapi import UploadFile, File
+
+@app.post("/api/v1/analyze-screenshot")
+async def analyze_screenshot_endpoint(file: UploadFile = File(...)):
+    """Multimodal CI failure screenshot analysis using Gemma 4."""
+    try:
+        contents = await file.read()
+        from services.llm import analyze_screenshot_with_gemma
+        analysis, model_used = analyze_screenshot_with_gemma(contents)
+        return {
+            "status": "success",
+            "model_used": model_used,
+            "filename": file.filename,
+            "analysis": analysis
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 @app.get("/env-health")
 def get_env_health():
     from learning.env_monitor import get_health_stats

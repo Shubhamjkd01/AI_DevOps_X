@@ -28,13 +28,17 @@ def create_fix_pr(repo_full_name: str, fix_data: dict, run_id: int) -> str:
     modified_code = fix_data["content"] + f"\n\n# AI Webhook Automated Fix Run ID: {run_id}"
     modify_file(repo_full_name, fix_data["file_path"], new_branch, modified_code, f"Automated fix by Agent for {run_id}")
     
+    from services.llm import get_last_model_used
+    model_used = fix_data.get("model_used") or get_last_model_used()
+    
     # Build Hackathon Winning PR Body
     reason = fix_data.get("explanation", "Identified issue in logs")
     priority = fix_data.get("priority", "HIGH")
     conf_math = fix_data.get("conf_reason", "")
     confidence_score = fix_data.get('confidence', 0.85)
     
-    confidence_display = f"\n\n### AI Auto-Fix Details\n"
+    confidence_display = f"\n\n### 🤖 Fixed by {model_used}\n"
+    confidence_display += f"**Model:** `{model_used}` (Google Gemma 4 Open-Weights)\n"
     confidence_display += f"**Priority:** {priority} 🚨\n"
     confidence_display += f"**Fix Summary:** Real Validation passed. Replaced `{fix_data.get('file_path')}` directly.\n"
     confidence_display += f"**Diff:** Review the full native file diff in the GitHub PR *Files Changed* tab.\n"

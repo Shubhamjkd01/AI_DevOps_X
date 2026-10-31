@@ -109,10 +109,13 @@ Just the raw code so it can be written directly back to the file.
     patch_explanation = query_llm(explain_prompt, llm_priority).strip()
 
     needs_refactor = analysis.get("needs_refactor", False)
+    from services.llm import get_last_model_used
+    model_used = getattr(fix_content, "model_used", None) or get_last_model_used()
 
     fix_data = {
         "file_path": file_path,
         "content": full_code, # Sent to GitHub wrapper to physically overwrite the branch file
+        "model_used": model_used,
         "explanation": explanation,
         "patch_explanation": patch_explanation,
         "needs_refactor": needs_refactor,

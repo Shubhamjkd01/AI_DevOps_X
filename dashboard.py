@@ -46,7 +46,9 @@ st.sidebar.warning("Task 2: Dependency Fix 🔄")
 st.sidebar.error("Task 3: Logic Regression 🔒")
 
 st.sidebar.markdown("---")
-llm_priority = st.sidebar.selectbox("🧠 Primary LLM Engine", ["Google Gemma 4 (Primary)", "Hugging Face Router", "Groq Llama-3 (Fastest)", "Gemini 1.5 Flash", "Offline / Failover Mode"])
+llm_priority = st.sidebar.selectbox("🧠 Primary LLM Engine", ["Google Gemma 4 (Primary)", "Open-Weights Groq Fallback", "Offline / Failover Mode"])
+active_model = os.getenv("GEMMA_MODEL_NAME", "models/gemma-4-26b-a4b-it")
+st.sidebar.caption(f"Model ID: `{active_model}`")
 
 st.sidebar.markdown("---")
 real_run_id = st.sidebar.text_input("🔗 Real GitHub Run ID (Leave blank to simulate)")
@@ -170,8 +172,9 @@ with pipeline_col:
         
         st.success(f"""
         ### ✅ Fix Applied Successfully
+        - **🤖 Fixed by:** `{active_model}`
         - **⏱ Time Taken:** {sim_time:.1f} sec
-        - **🧠 Source:** {"FAISS Memory (Skipped LLM generation)" if match_found else ("Local Failover" if llm_priority == "Offline / Failover Mode" else "LLM Native Generation")}
+        - **🧠 Engine Source:** {"FAISS Episodic Memory" if match_found else f"Google Gemma 4 (`{active_model}`)"}
         - **🎯 Confidence:** {conf_score}%
         """)
 
@@ -204,12 +207,13 @@ st.divider()
 # ==========================================
 # HISTORY & HOT ZONES
 # ==========================================
-st.markdown("### 🗄️ FAISS Episodic Memory Tensor Map")
+st.markdown("### 🗄️ FAISS Episodic Memory Tensor Map & Run History")
 if memory:
     mem_data = []
     for i, m in enumerate(reversed(memory)):
         mem_data.append({
             "RL Weight": "✅ +1.0" if m.get("accepted") else "❌ -1.0",
+            "Model Used": m.get("model_used") or active_model,
             "Status": ("⭐ Recent Successful Fix" if m.get("accepted") else "🚨 Recent Failed Iteration") if i == 0 else "Archived Iteration",
             "Fault Category": m.get("failure_category", "Unknown"),
             "Signature Snippet": m.get("error")[:80] + "..."
@@ -226,3 +230,27 @@ if memory:
     st.dataframe(df.style.apply(highlight_recent, axis=1), use_container_width=True, hide_index=True)
 else:
     st.info("FAISS vector memory is empty. Trigger a pipeline failure to populate.")
+
+st.divider()
+
+# ==========================================
+# MULTIMODAL SCREENSHOT TRIAGE (GEMMA 4)
+# ==========================================
+st.markdown("### 📸 Multimodal CI/CD Crash Screenshot Triage (Google Gemma 4)")
+st.caption("Upload a screenshot of your failing terminal or CI pipeline. Gemma 4 will visually inspect the stack trace and diagnose the root cause.")
+
+uploaded_image = st.file_uploader("Upload CI/CD Failure Screenshot", type=["png", "jpg", "jpeg"])
+if uploaded_image:
+    img_col1, img_col2 = st.columns([1, 1])
+    with img_col1:
+        st.image(uploaded_image, caption="Uploaded Crash Screenshot", use_container_width=True)
+    with img_col2:
+        if st.button("🔍 Diagnose with Gemma 4", type="primary"):
+            with st.spinner("Gemma 4 is inspecting the crash image..."):
+                try:
+                    from services.llm import analyze_screenshot_with_gemma
+                    diag_text, model_name = analyze_screenshot_with_gemma(uploaded_image.getvalue())
+                    st.success(f"**Diagnosed by:** `{model_name}`")
+                    st.markdown(diag_text)
+                except Exception as e:
+                    st.error(f"Multimodal inspection error: {e}")
