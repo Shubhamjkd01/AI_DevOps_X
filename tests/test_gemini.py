@@ -1,28 +1,20 @@
 import os
 from dotenv import load_dotenv
 load_dotenv(override=True)
-from google import genai
+import google.generativeai as genai
 
-key = os.getenv("GEMINI_API_KEY")
+key = os.getenv("GEMMA_API_KEY") or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 print("Key length:", len(key) if key else 0)
 
-try:
-    client = genai.Client(api_key=key)
-    print("Testing gemini-pro...")
-    response = client.models.generate_content(
-        model="gemini-pro",
-        contents="Say exactly 'SUCCESS'"
-    )
-    print("gemini-pro SUCCESS! Response:", response.text)
-except Exception as e:
-    print("gemini-pro FAILED:", str(e))
-
-try:
-    print("Testing gemini-1.5-pro...")
-    response = client.models.generate_content(
-        model="gemini-1.5-pro",
-        contents="Say exactly 'SUCCESS'"
-    )
-    print("gemini-1.5-pro SUCCESS! Response:", response.text)
-except Exception as e:
-    print("gemini-1.5-pro FAILED:", str(e))
+if not key:
+    print("No GEMMA_API_KEY found.")
+else:
+    try:
+        genai.configure(api_key=key)
+        model_name = os.getenv("GEMMA_MODEL_NAME", "models/gemma-4-26b-a4b-it")
+        print(f"Testing Gemma ({model_name})...")
+        model = genai.GenerativeModel(model_name)
+        response = model.generate_content("Say exactly 'SUCCESS'")
+        print("Gemma SUCCESS! Response:", response.text.strip())
+    except Exception as e:
+        print("Gemma FAILED:", str(e))

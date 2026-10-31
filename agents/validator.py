@@ -15,10 +15,15 @@ def check_hallucinations(code: str) -> bool:
         return False
 
     # 2. Strict regex checks for hallucinated libraries or destructive commands
-    forbidden_imports = ['subprocess', 'os.system', 'pty', 'shutil']
-    for bad_import in forbidden_imports:
-        if re.search(r'\b(?:import|from)\s+' + bad_import.replace('.', r'\.') + r'\b', code):
-            logger.error(f"Hallucination Guard: Forbidden import detected ({bad_import}). Rejecting patch!")
+    forbidden_patterns = [
+        r'\b(?:import|from)\s+(?:subprocess|pty|shutil)\b',
+        r'\bos\.system\b',
+        r'\bsubprocess\b',
+        r'\bshutil\.rmtree\b'
+    ]
+    for pattern in forbidden_patterns:
+        if re.search(pattern, code):
+            logger.error(f"Hallucination Guard: Dangerous pattern detected ({pattern}). Rejecting patch!")
             return False
 
     return True
