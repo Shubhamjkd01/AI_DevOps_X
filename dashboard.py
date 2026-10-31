@@ -5,6 +5,7 @@ import time
 import requests
 import random
 import pandas as pd
+import base64
 
 # ==========================================
 # PAGE CONFIGURATION
@@ -25,6 +26,23 @@ HOT_ZONES_FILE = "c:/AI_DeVops/github_agent_backend/hot_zones.json"
 API_URL = "http://localhost:7860"
 WEBHOOK_URL = f"{API_URL}/api/v1/webhook/github"
 active_model = os.getenv("GEMMA_MODEL_NAME", "models/gemma-4-26b-a4b-it")
+
+def get_developer_img_base64():
+    candidates = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "developer.png"),
+        "c:/AI_DeVops/github_agent_backend/developer.png",
+        "developer.png"
+    ]
+    for p in candidates:
+        if os.path.exists(p):
+            try:
+                with open(p, "rb") as f:
+                    return base64.b64encode(f.read()).decode("utf-8")
+            except Exception:
+                pass
+    return ""
+
+dev_img_b64 = get_developer_img_base64()
 
 def load_json(filepath, default_val):
     if not os.path.exists(filepath):
@@ -544,17 +562,31 @@ div[data-baseweb="tab-highlight"], div[data-baseweb="tab-border"] {
     height: 3px;
     background: linear-gradient(90deg, #EC4899 0%, #8B5CF6 50%, #06B6D4 100%);
 }
-.dev-avatar {
-    width: 75px;
-    height: 75px;
+.dev-photo-wrap {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+}
+.dev-photo {
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.2rem;
-    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
-    border: 3px solid rgba(255, 255, 255, 0.2);
+    object-fit: cover;
+    object-position: center top;
+    border: 3px solid rgba(168, 85, 247, 0.75);
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.45), 0 0 45px rgba(6, 182, 212, 0.25);
+}
+.dev-online-dot {
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+    width: 16px;
+    height: 16px;
+    background: #10B981;
+    border-radius: 50%;
+    border: 3px solid #0D111C;
+    box-shadow: 0 0 10px #10B981;
 }
 .dev-tag-chip {
     background: rgba(139, 92, 246, 0.15);
@@ -593,7 +625,7 @@ div[data-baseweb="tab-highlight"], div[data-baseweb="tab-border"] {
 }
 </style>
 
-<!-- TOP NAVBAR -->
+<!-- TOP NAVBAR (MINIMAL & SHORT) -->
 <div class="navbar">
     <div class="nav-logo">
         <div class="nav-logo-icon">⚡</div>
@@ -603,18 +635,13 @@ div[data-baseweb="tab-highlight"], div[data-baseweb="tab-border"] {
         </div>
     </div>
     <div class="nav-links">
-        <a href="#connect-guide">CONNECT GITHUB</a>
-        <a href="#dev-tips">DEV TIPS</a>
-        <a href="#architecture">ARCHITECTURE</a>
         <a href="#triage">LIVE TRIAGE</a>
-        <a href="#about-author">ABOUT DEV</a>
+        <a href="#documentation">DOCUMENTATION</a>
+        <a href="#about-author">ABOUT DEVELOPER</a>
     </div>
-    <div style="display: flex; gap: 0.75rem; align-items: center;">
-        <a href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank" style="color: #F8FAFC; text-decoration: none; font-weight: 700; font-size: 0.82rem; display: flex; align-items: center; gap: 0.35rem; background: rgba(255, 255, 255, 0.08); padding: 0.5rem 1rem; border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.15);">
-            ⭐ STAR REPO
-        </a>
-        <a class="nav-btn" href="#connect-guide">
-            ⚡ CONNECT GITHUB
+    <div>
+        <a class="nav-btn" href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank">
+            ⭐ STAR ON GITHUB
         </a>
     </div>
 </div>
@@ -768,28 +795,131 @@ with m_col3:
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("<div style='margin-bottom: 3rem;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-bottom: 3.5rem;'></div>", unsafe_allow_html=True)
 
 # ==========================================
-# GITHUB CONNECTION & LOCAL INSTALLATION GUIDE
+# 1. INTERACTIVE COMMAND CENTER & LIVE TRIAGE
 # ==========================================
 st.markdown("""
-<div class="section-header" id="connect-guide">
-    <div class="section-tag">GETTING STARTED</div>
-    <div class="section-title">Connect Any Repository or Run Locally</div>
-    <div class="section-desc">Zero complex configuration. Connect your GitHub repository in 2 minutes via Webhooks, or run the complete agent stack locally on your computer.</div>
+<div class="section-header" id="triage">
+    <div class="section-tag">LIVE INTERACTIVE ENGINE</div>
+    <div class="section-title">Failure Simulation & Visual Diagnostics</div>
+    <div class="section-desc">Test real-time stack trace triage, upload error screenshots for Gemma 4 visual inspection, and inspect FAISS episodic memory.</div>
 </div>
 """, unsafe_allow_html=True)
 
-guide_tab1, guide_tab2, guide_tab3, guide_tab4, guide_tab5 = st.tabs([
-    "🔗 Option A: Connect GitHub via Webhook",
-    "💻 Option B: Run Locally / Self-Hosted",
-    "💡 Developer Setup Tips & Best Practices",
-    "🛡️ Enterprise Security & Zero-Trust Guarantees",
+col_exec, col_visual = st.columns([1.1, 1], gap="large")
+
+with col_exec:
+    st.markdown("### 🎛️ Live CI/CD Failure Triage Execution")
+    
+    cfg1, cfg2 = st.columns(2)
+    with cfg1:
+        target_repo = st.selectbox("🎯 Target GitHub Repository", ["Shubhamjkd01/Nursesycn", "Shubhamjkd01/AI_DevOps_X", "Shubhamjkd01/edusentinel-v3"])
+    with cfg2:
+        fail_scenario = st.selectbox("⚡ Simulated Crash Scenario", ["SyntaxError on main.py", "MissingDependency in requirements.txt", "Multi-file Regression"])
+        
+    exec_button = st.button("🚀 EXECUTE AUTONOMOUS HEALING RUN", key="exec_run", use_container_width=True)
+
+    if trigger_now or exec_button:
+        sim_time = random.uniform(3.8, 5.9)
+        conf_score = random.randint(92, 99)
+        
+        # Async Backend Webhook Trigger
+        try:
+            requests.post(
+                WEBHOOK_URL,
+                headers={"X-GitHub-Event": "workflow_run"},
+                json={
+                    "action": "completed",
+                    "workflow_run": {"id": random.randint(10000, 99999), "status": "completed", "conclusion": "failure"},
+                    "repository": {"full_name": target_repo},
+                    "mock_fail_type": "syntax",
+                    "llm_priority": "Google Gemma 4 (Primary)"
+                },
+                timeout=2
+            )
+        except Exception:
+            pass
+            
+        progress = st.progress(10, text="1/5: GitHub Actions failure webhook intercepted...")
+        time.sleep(0.6)
+        progress.progress(35, text="2/5: Google Gemma 4 analyzing stack trace context...")
+        time.sleep(0.8)
+        progress.progress(65, text="3/5: Querying FAISS 768-dim episodic memory...")
+        time.sleep(0.7)
+        progress.progress(85, text="4/5: AST Hallucination Guard & Docker Sandbox regression pass...")
+        time.sleep(0.6)
+        progress.progress(100, text="5/5: Automated Pull Request Created! 🎉")
+        
+        st.success(f"""
+        **✅ Fix Synthesized & Deployed!**  
+        - **🤖 Verified Model:** `{active_model}`  
+        - **⏱ Execution Time:** `{sim_time:.1f}s` (Auto-resolved)  
+        - **🎯 Math Confidence:** `{conf_score}%`  
+        - **🛡️ AST Safety Guard:** `Zero Hallucinations & Zero Dangerous Calls`
+        """)
+        st.code(f"Created Branch: fix/workflow-auto-heal\nPushed to: https://github.com/{target_repo}/pull/new", language="bash")
+
+with col_visual:
+    st.markdown("### 📸 Multimodal Crash Screenshot Triage")
+    st.caption("Upload a screenshot of any terminal error or CI failure. Gemma 4 will visually inspect the error.")
+    
+    uploaded_image = st.file_uploader("Drop failure screenshot here", type=["png", "jpg", "jpeg"])
+    if uploaded_image:
+        st.image(uploaded_image, caption="Uploaded Crash Screenshot", use_container_width=True)
+        if st.button("🔍 DIAGNOSE WITH GEMMA 4", key="diag_btn", use_container_width=True):
+            with st.spinner("Gemma 4 is inspecting screenshot pixels..."):
+                try:
+                    from services.llm import analyze_screenshot_with_gemma
+                    diag_text, model_name = analyze_screenshot_with_gemma(uploaded_image.getvalue())
+                    st.success(f"**Diagnosed by:** `{model_name}`")
+                    st.markdown(diag_text)
+                except Exception as e:
+                    st.error(f"Multimodal error: {e}")
+
+st.markdown("<div style='margin-bottom: 2.5rem;'></div>", unsafe_allow_html=True)
+
+# FAISS Memory & Run Table
+st.markdown("### 🗄️ FAISS Episodic Memory & Verifiable Run History")
+if memory:
+    mem_data = []
+    for i, m in enumerate(reversed(memory[:8])):
+        mem_data.append({
+            "RL Reward": "✅ +1.0" if m.get("accepted") else "❌ -1.0",
+            "Model Used": m.get("model_used") or active_model,
+            "Triage Status": "⭐ Verified Fix" if m.get("accepted") else "🚨 Iteration",
+            "Category": m.get("failure_category", "SyntaxError"),
+            "Error Snippet": m.get("error", "Pipeline failure")[:65] + "..."
+        })
+    df = pd.DataFrame(mem_data)
+    st.dataframe(df, use_container_width=True, hide_index=True)
+else:
+    st.info("FAISS vector tensor map is active and ready to log memory iterations.")
+
+st.markdown("<div style='margin-bottom: 4.5rem;'></div>", unsafe_allow_html=True)
+
+# ==========================================
+# 2. CONSOLIDATED DOCUMENTATION & SETUP GUIDANCE
+# ==========================================
+st.markdown("""
+<div class="section-header" id="documentation">
+    <div class="section-tag">DOCUMENTATION & SETUP GUIDANCE</div>
+    <div class="section-title">Developer Integration & Architecture</div>
+    <div class="section-desc">Complete guide to connecting repositories via webhooks, installing locally, exploring architecture, and reviewing security.</div>
+</div>
+""", unsafe_allow_html=True)
+
+doc_tab1, doc_tab2, doc_tab3, doc_tab4, doc_tab5, doc_tab6 = st.tabs([
+    "🔗 Connect GitHub (Webhook Setup)",
+    "💻 Local Installation (CLI & Docker)",
+    "💡 Developer Setup Tips & Multi-Repo",
+    "🏗️ Multi-Agent Architecture & Endpoints",
+    "🛡️ Enterprise Security & Zero-Trust",
     "🧪 Live Webhook Ping Tester"
 ])
 
-with guide_tab1:
+with doc_tab1:
     st.markdown("""
     <div class="guide-card guide-card-cyan">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
@@ -830,7 +960,7 @@ with guide_tab1:
         st.markdown(f"""
         <div class="config-preview-box">
             <div style="color: #64748B; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">
-                📋 Your Ready-to-Copy GitHub Webhook Settings:
+                📋 Ready-to-Copy GitHub Webhook Settings:
             </div>
             <div style="margin-bottom: 0.4rem;">
                 <span class="config-label">Payload URL:</span>
@@ -924,7 +1054,7 @@ with guide_tab1:
     </div>
     """, unsafe_allow_html=True)
 
-with guide_tab2:
+with doc_tab2:
     st.markdown("""
     <div class="guide-card guide-card-purple" id="local-install">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
@@ -1033,7 +1163,7 @@ with guide_tab2:
         """)
     st.markdown("</div>", unsafe_allow_html=True)
 
-with guide_tab3:
+with doc_tab3:
     st.markdown("""
     <div class="guide-card" style="border-top: 3px solid #EC4899;" id="dev-tips">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
@@ -1101,7 +1231,64 @@ with guide_tab3:
         
     st.markdown("</div>", unsafe_allow_html=True)
 
-with guide_tab4:
+with doc_tab4:
+    st.markdown("""
+    <div class="guide-card" style="border-top: 3px solid #8B5CF6;">
+        <h4 style="color: #FFFFFF; font-size: 1.15rem; margin-top: 0;">⚡ 5-Tier Agentic Pipeline Workflow</h4>
+        <div class="step-item">
+            <div class="step-badge" style="background: #3B82F6;">1</div>
+            <div class="step-content">
+                <div class="step-heading">Ingestion & Triage</div>
+                <div class="step-subtext">GitHub webhook delivers failure event &rarr; HMAC SHA-256 signature is verified &rarr; logs are downloaded and parsed into structured AST failure frames.</div>
+            </div>
+        </div>
+        <div class="step-item">
+            <div class="step-badge" style="background: #8B5CF6;">2</div>
+            <div class="step-content">
+                <div class="step-heading">FAISS Tensor Memory Retrieval</div>
+                <div class="step-subtext">Queries 768-dimensional L2 tensor embeddings of previously accepted fixes. If a similar failure was resolved before, historical context is injected into Gemma 4's prompt.</div>
+            </div>
+        </div>
+        <div class="step-item">
+            <div class="step-badge" style="background: #EC4899;">3</div>
+            <div class="step-content">
+                <div class="step-heading">Gemma 4 AST Patch Synthesis</div>
+                <div class="step-subtext">Google Gemma 4 (<code>models/gemma-4-26b-a4b-it</code>) reasons over repository AST context to generate a surgical, minimal patch targeting the root cause.</div>
+            </div>
+        </div>
+        <div class="step-item">
+            <div class="step-badge" style="background: #10B981;">4</div>
+            <div class="step-content">
+                <div class="step-heading">AST Safety Guard & Docker Sandbox</div>
+                <div class="step-subtext">Python <code>ast.parse()</code> verifies syntactic validity and blocks dangerous functions (<code>os.system</code>, <code>eval</code>). Ephemeral Docker sandbox runs pytest to verify zero regressions.</div>
+            </div>
+        </div>
+        <div class="step-item">
+            <div class="step-badge" style="background: #06B6D4;">5</div>
+            <div class="step-content">
+                <div class="step-heading">3-Tier Judge & Automated PR</div>
+                <div class="step-subtext">Junior/Senior/Principal LLM Judge evaluates patch quality. If score &ge; 0.5, PR Agent creates branch <code>fix/workflow-{run_id}</code> and opens a ready-to-merge Pull Request.</div>
+            </div>
+        </div>
+        
+        <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 1.5rem 0 1rem 0;"></div>
+        <h4 style="color: #FFFFFF; font-size: 1.05rem;">🌐 Core REST Endpoints</h4>
+        <div style="font-size: 0.85rem; color: #CBD5E1; line-height: 1.6;">
+            <p><strong><code>POST /webhook</code> or <code>/api/v1/webhook/github</code></strong> &mdash; Receives GitHub Action crash webhooks. Triggers background triage and PR synthesis.</p>
+            <p><strong><code>GET /health</code></strong> &mdash; Returns system health, active Gemma 4 model verification, and readiness status.</p>
+            <p><strong><code>GET /tasks</code></strong> &mdash; Returns active OpenEnv benchmark tasks and grading callables.</p>
+            <p><strong><code>POST /grade</code></strong> &mdash; Executes task graders dynamically against candidate patch diffs.</p>
+            <p><strong><code>POST /reset</code> & <code>POST /step</code></strong> &mdash; Core OpenEnv reinforcement learning simulation environment endpoints.</p>
+        </div>
+        <div style="margin-top: 1rem;">
+            <a href="http://localhost:7860/docs" target="_blank" class="dev-btn dev-btn-secondary" style="font-size: 0.8rem;">
+                📚 Open Swagger API Docs (/docs) ↗
+            </a>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with doc_tab5:
     st.markdown("""
     <div class="guide-card guide-card-emerald">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
@@ -1148,7 +1335,7 @@ with guide_tab4:
         
     st.markdown("</div>", unsafe_allow_html=True)
 
-with guide_tab5:
+with doc_tab6:
     st.markdown("""
     <div class="guide-card guide-card-emerald">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
@@ -1205,188 +1392,12 @@ with guide_tab5:
                 
     st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<div style='margin-bottom: 3.5rem;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-bottom: 4.5rem;'></div>", unsafe_allow_html=True)
 
 # ==========================================
-# INTERACTIVE COMMAND CENTER & TRIAGE
+# 3. ABOUT THE DEVELOPER (SHUBHAM)
 # ==========================================
-col_exec, col_visual = st.columns([1.1, 1], gap="large")
-
-with col_exec:
-    st.markdown("### 🎛️ Live CI/CD Failure Triage Execution")
-    
-    cfg1, cfg2 = st.columns(2)
-    with cfg1:
-        target_repo = st.selectbox("🎯 Target GitHub Repository", ["Shubhamjkd01/Nursesycn", "Shubhamjkd01/AI_DevOps_X", "Shubhamjkd01/edusentinel-v3"])
-    with cfg2:
-        fail_scenario = st.selectbox("⚡ Simulated Crash Scenario", ["SyntaxError on main.py", "MissingDependency in requirements.txt", "Multi-file Regression"])
-        
-    exec_button = st.button("🚀 EXECUTE AUTONOMOUS HEALING RUN", key="exec_run", use_container_width=True)
-
-    if trigger_now or exec_button:
-        sim_time = random.uniform(3.8, 5.9)
-        conf_score = random.randint(92, 99)
-        
-        # Async Backend Webhook Trigger
-        try:
-            requests.post(
-                WEBHOOK_URL,
-                headers={"X-GitHub-Event": "workflow_run"},
-                json={
-                    "action": "completed",
-                    "workflow_run": {"id": random.randint(10000, 99999), "status": "completed", "conclusion": "failure"},
-                    "repository": {"full_name": target_repo},
-                    "mock_fail_type": "syntax",
-                    "llm_priority": "Google Gemma 4 (Primary)"
-                },
-                timeout=2
-            )
-        except Exception:
-            pass
-            
-        progress = st.progress(10, text="1/5: GitHub Actions failure webhook intercepted...")
-        time.sleep(0.6)
-        progress.progress(35, text="2/5: Google Gemma 4 analyzing stack trace context...")
-        time.sleep(0.8)
-        progress.progress(65, text="3/5: Querying FAISS 768-dim episodic memory...")
-        time.sleep(0.7)
-        progress.progress(85, text="4/5: AST Hallucination Guard & Docker Sandbox regression pass...")
-        time.sleep(0.6)
-        progress.progress(100, text="5/5: Automated Pull Request Created! 🎉")
-        
-        st.success(f"""
-        **✅ Fix Synthesized & Deployed!**  
-        - **🤖 Verified Model:** `{active_model}`  
-        - **⏱ Execution Time:** `{sim_time:.1f}s` (Auto-resolved)  
-        - **🎯 Math Confidence:** `{conf_score}%`  
-        - **🛡️ AST Safety Guard:** `Zero Hallucinations & Zero Dangerous Calls`
-        """)
-        st.code(f"Created Branch: fix/workflow-auto-heal\nPushed to: https://github.com/{target_repo}/pull/new", language="bash")
-
-with col_visual:
-    st.markdown("### 📸 Multimodal Crash Screenshot Triage")
-    st.caption("Upload a screenshot of any terminal error or CI failure. Gemma 4 will visually inspect the error.")
-    
-    uploaded_image = st.file_uploader("Drop failure screenshot here", type=["png", "jpg", "jpeg"])
-    if uploaded_image:
-        st.image(uploaded_image, caption="Uploaded Crash Screenshot", use_container_width=True)
-        if st.button("🔍 DIAGNOSE WITH GEMMA 4", key="diag_btn", use_container_width=True):
-            with st.spinner("Gemma 4 is inspecting screenshot pixels..."):
-                try:
-                    from services.llm import analyze_screenshot_with_gemma
-                    diag_text, model_name = analyze_screenshot_with_gemma(uploaded_image.getvalue())
-                    st.success(f"**Diagnosed by:** `{model_name}`")
-                    st.markdown(diag_text)
-                except Exception as e:
-                    st.error(f"Multimodal error: {e}")
-
-st.markdown("<div style='margin-bottom: 2.5rem;'></div>", unsafe_allow_html=True)
-
-# ==========================================
-# FAISS MEMORY & RUN TABLE
-# ==========================================
-st.markdown("### 🗄️ FAISS Episodic Memory & Verifiable Run History")
-if memory:
-    mem_data = []
-    for i, m in enumerate(reversed(memory[:8])):
-        mem_data.append({
-            "RL Reward": "✅ +1.0" if m.get("accepted") else "❌ -1.0",
-            "Model Used": m.get("model_used") or active_model,
-            "Triage Status": "⭐ Verified Fix" if m.get("accepted") else "🚨 Iteration",
-            "Category": m.get("failure_category", "SyntaxError"),
-            "Error Snippet": m.get("error", "Pipeline failure")[:65] + "..."
-        })
-    df = pd.DataFrame(mem_data)
-    st.dataframe(df, use_container_width=True, hide_index=True)
-else:
-    st.info("FAISS vector tensor map is active and ready to log memory iterations.")
-
-st.markdown("<div style='margin-bottom: 4rem;'></div>", unsafe_allow_html=True)
-
-# ==========================================
-# SYSTEM ARCHITECTURE & API DOCUMENTATION
-# ==========================================
-st.markdown("""
-<div class="section-header" id="docs">
-    <div class="section-tag">DOCUMENTATION & ARCHITECTURE</div>
-    <div class="section-title">How the Autonomous Engine Operates</div>
-    <div class="section-desc">A five-tier multi-agent pipeline designed for resilient, hallucination-free automated DevOps repairs.</div>
-</div>
-""", unsafe_allow_html=True)
-
-doc_col1, doc_col2 = st.columns([1.1, 1], gap="large")
-with doc_col1:
-    st.markdown("""
-    <div class="guide-card" style="border-top: 3px solid #8B5CF6;">
-        <h4 style="color: #FFFFFF; font-size: 1.1rem; margin-top: 0;">⚡ 5-Tier Agentic Pipeline Workflow</h4>
-        <div class="step-item">
-            <div class="step-badge" style="background: #3B82F6;">1</div>
-            <div class="step-content">
-                <div class="step-heading">Ingestion & Triage</div>
-                <div class="step-subtext">GitHub webhook delivers failure event &rarr; HMAC SHA-256 signature is verified &rarr; logs are downloaded and parsed into structured AST failure frames.</div>
-            </div>
-        </div>
-        <div class="step-item">
-            <div class="step-badge" style="background: #8B5CF6;">2</div>
-            <div class="step-content">
-                <div class="step-heading">FAISS Tensor Memory Retrieval</div>
-                <div class="step-subtext">Queries 768-dimensional L2 tensor embeddings of previously accepted fixes. If a similar failure was resolved before, historical context is injected into Gemma 4's prompt.</div>
-            </div>
-        </div>
-        <div class="step-item">
-            <div class="step-badge" style="background: #EC4899;">3</div>
-            <div class="step-content">
-                <div class="step-heading">Gemma 4 AST Patch Synthesis</div>
-                <div class="step-subtext">Google Gemma 4 (<code>models/gemma-4-26b-a4b-it</code>) reasons over repository AST context to generate a surgical, minimal patch targeting the root cause.</div>
-            </div>
-        </div>
-        <div class="step-item">
-            <div class="step-badge" style="background: #10B981;">4</div>
-            <div class="step-content">
-                <div class="step-heading">AST Safety Guard & Docker Sandbox</div>
-                <div class="step-subtext">Python <code>ast.parse()</code> verifies syntactic validity and blocks dangerous functions (<code>os.system</code>, <code>eval</code>). Ephemeral Docker sandbox runs pytest to verify zero regressions.</div>
-            </div>
-        </div>
-        <div class="step-item">
-            <div class="step-badge" style="background: #06B6D4;">5</div>
-            <div class="step-content">
-                <div class="step-heading">3-Tier Judge & Automated PR</div>
-                <div class="step-subtext">Junior/Senior/Principal LLM Judge evaluates patch quality. If score &ge; 0.5, PR Agent creates branch <code>fix/workflow-{run_id}</code> and opens a ready-to-merge Pull Request.</div>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with doc_col2:
-    st.markdown("""
-    <div class="guide-card" style="border-top: 3px solid #06B6D4;">
-        <h4 style="color: #FFFFFF; font-size: 1.1rem; margin-top: 0;">🌐 Core API Endpoints</h4>
-        <div style="font-size: 0.84rem; color: #CBD5E1; line-height: 1.65;">
-            <p><strong><code>POST /webhook</code> or <code>/api/v1/webhook/github</code></strong><br>
-            Receives GitHub Action crash webhooks. Triggers background triage and PR synthesis.</p>
-            <p><strong><code>GET /health</code></strong><br>
-            Returns system health, active Gemma 4 model verification, and readiness status.</p>
-            <p><strong><code>GET /tasks</code></strong><br>
-            Returns active OpenEnv benchmark tasks and grading callables.</p>
-            <p><strong><code>POST /grade</code></strong><br>
-            Executes task graders dynamically against candidate patch diffs.</p>
-            <p><strong><code>POST /reset</code> & <code>POST /step</code></strong><br>
-            Core OpenEnv reinforcement learning simulation environment endpoints.</p>
-        </div>
-        <div style="margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
-            <a href="http://localhost:7860/docs" target="_blank" class="dev-btn dev-btn-secondary" style="font-size: 0.8rem;">
-                📚 Open Swagger API Docs (/docs) ↗
-            </a>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<div style='margin-bottom: 3.5rem;'></div>", unsafe_allow_html=True)
-
-# ==========================================
-# ABOUT THE DEVELOPER (SHUBHAM)
-# ==========================================
-st.markdown("""
+st.markdown(f"""
 <div class="section-header" id="about-author">
     <div class="section-tag">OPEN SOURCE CREATOR</div>
     <div class="section-title">About the Developer</div>
@@ -1394,22 +1405,23 @@ st.markdown("""
 </div>
 
 <div class="dev-card">
-    <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
-        <div class="dev-avatar">
-            👨‍💻
+    <div style="display: flex; gap: 2.2rem; align-items: center; flex-wrap: wrap;">
+        <div class="dev-photo-wrap">
+            <img src="data:image/png;base64,{dev_img_b64}" class="dev-photo" alt="Shubham - Developer" />
+            <div class="dev-online-dot"></div>
         </div>
         <div style="flex: 1; min-width: 280px;">
             <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.6rem; font-weight: 800;">Shubham</h3>
-                <span style="background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: #C084FC; padding: 0.2rem 0.7rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.65rem; font-weight: 800;">Shubham</h3>
+                <span style="background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: #C084FC; padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
                     @Shubhamjkd01
                 </span>
-                <span style="background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(6, 182, 212, 0.4); color: #22D3EE; padding: 0.2rem 0.7rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                <span style="background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(6, 182, 212, 0.4); color: #22D3EE; padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
                     AI & DevOps Systems Architect
                 </span>
             </div>
-            <p style="margin: 0.8rem 0 1.2rem 0; color: #94A3B8; font-size: 0.95rem; line-height: 1.6;">
-                I am an open-source engineer passionate about eliminating developer downtime. I designed <strong>AI DevOps</strong> to transform broken CI/CD pipelines into self-healing workflows powered by Google's open-weight <strong>Gemma 4</strong> models, rigorous AST syntax validation, and episodic vector memory.
+            <p style="margin: 0.8rem 0 1.2rem 0; color: #94A3B8; font-size: 0.95rem; line-height: 1.65;">
+                Hi, I'm Shubham! I designed and built <strong>AI DevOps</strong> to transform broken CI/CD pipelines into autonomous, self-healing workflows. Powered by Google's open-weight <strong>Gemma 4</strong> models, rigorous AST syntax validation, and episodic vector memory, it resolves build failures in seconds without human debugging fatigue.
             </p>
             <div style="margin-bottom: 1.2rem;">
                 <span class="dev-tag-chip">🐍 Python 3.11</span>
