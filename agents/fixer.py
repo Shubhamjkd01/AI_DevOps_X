@@ -58,10 +58,33 @@ No explanation, no markdown formatting, no code fences (do not use ```python).
 Just the raw code so it can be written directly back to the file.
 """
     import difflib
+    import ast
     
+    def _clean_code(text: str) -> str:
+        # 1. Try markdown code fences first
+        match = re.search(r'```(?:python)?\s*\n(.*?)\n```', text, re.DOTALL | re.IGNORECASE)
+        if match:
+            candidate = match.group(1).strip()
+            try:
+                ast.parse(candidate)
+                return candidate
+            except Exception:
+                pass
+                
+        # 2. Try candidate line slices to isolate pure Python from conversational thoughts
+        cleaned = text.replace("```python", "").replace("```", "").removeprefix("python\n").strip()
+        lines = cleaned.splitlines()
+        for idx in range(len(lines)):
+            candidate = "\n".join(lines[idx:]).strip()
+            try:
+                ast.parse(candidate)
+                return candidate
+            except Exception:
+                continue
+        return cleaned
+
     fix_content = query_llm(prompt, llm_priority)
-    full_code = fix_content.strip()
-    full_code = full_code.replace("```python", "").replace("```", "").removeprefix("python\n").strip()
+    full_code = _clean_code(fix_content)
     
     # --- PR Validation Guard ---
     diff = list(difflib.ndiff(current_code.splitlines(), full_code.splitlines()))
@@ -71,8 +94,7 @@ Just the raw code so it can be written directly back to the file.
         logger.warning(f"PR Validation Guard: Patch deletes {deleted_lines} lines! Rejecting patch and retrying with conservative fix.")
         conservative_prompt = prompt.replace(prompt_style, "Provide a highly conservative fix. ONLY modify the exact lines causing the error. DO NOT delete existing valid code. DO NOT wipe the file.")
         fix_content = query_llm(conservative_prompt, llm_priority)
-        full_code = fix_content.strip()
-        full_code = full_code.replace("```python", "").replace("```", "").removeprefix("python\n").strip()
+        full_code = _clean_code(fix_content)
     # ---------------------------
 
     # Real Confidence Calculation using Cosine Similarity Vectors

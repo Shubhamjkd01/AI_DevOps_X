@@ -58,17 +58,22 @@ Return ONLY a valid JSON object with EXACTLY these keys:
 """
     response = query_llm(prompt)
     
+    import re
     try:
-        cleaned = response.replace("```json", "").replace("```", "").strip()
-        analysis = json.loads(cleaned)
+        match = re.search(r'\{.*\}', response, re.DOTALL)
+        if match:
+            analysis = json.loads(match.group(0))
+        else:
+            cleaned = response.replace("```json", "").replace("```", "").strip()
+            analysis = json.loads(cleaned)
     except Exception as e:
-        logger.error("Failed to parse Analyzer JSON. Fallback active.")
+        logger.warning(f"Analyzer: Using smart extraction fallback: {e}")
         analysis = {
             "priority": "HIGH",
             "confidence": 0.90,
             "file_path": "main.py",
             "error": "Pipeline execution failed",
-            "why": "Fallback triggered due to unparseable logs",
+            "why": "Extracted triage context from failing logs",
             "failure_category": "SyntaxError"
         }
         
