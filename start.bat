@@ -1,13 +1,12 @@
 @echo off
-echo Activating Virtual Environment...
-call ..\.venv\Scripts\activate.bat
+echo ==========================================
+echo   Starting AI DevOps Agent Services
+echo ==========================================
+echo.
+echo 1. Starting FastAPI Webhook Backend on port 7860...
+start "AI DevOps Backend" cmd /k "python -m uvicorn server.app:app --host 0.0.0.0 --port 7860"
 
-echo Installing dependencies...
-uv pip install -r requirements.txt
-uv pip install fastapi uvicorn pydantic requests pygithub streamlit openai python-dotenv openenv
+echo 2. Starting Streamlit Dashboard on port 8501...
+start "AI DevOps Dashboard" cmd /k "streamlit run dashboard.py"
 
-echo Starting FastAPI Server in background...
-start uvicorn server.app:app --host 0.0.0.0 --port 7860 --reload
-
-echo Starting ngrok tunnel...
-.\ngrok http 7860
+echo Services running! Check the opened terminal windows.
