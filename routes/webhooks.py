@@ -1,3 +1,7 @@
+import os
+import hmac
+import hashlib
+import json
 from fastapi import APIRouter, Request, HTTPException
 import logging
 
@@ -11,12 +15,29 @@ router = APIRouter()
 async def github_webhook(request: Request):
     """
     Endpoint to receive GitHub Webhooks, specifically workflow failures.
+    Secured via HMAC SHA-256 signature verification when GITHUB_WEBHOOK_SECRET is set.
     """
     event = request.headers.get("X-GitHub-Event")
     if not event:
         raise HTTPException(status_code=400, detail="Missing X-GitHub-Event header")
 
-    payload = await request.json()
+    body_bytes = await request.body()
+    secret = os.environ.get("GITHUB_WEBHOOK_SECRET")
+    if secret:
+        signature = request.headers.get("X-Hub-Signature-256")
+        if not signature:
+            logger.warning("Unauthorized webhook request: Missing X-Hub-Signature-256 header")
+            raise HTTPException(status_code=401, detail="Missing X-Hub-Signature-256 header")
+        
+        expected_sig = "sha256=" + hmac.new(secret.encode(), body_bytes, hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(expected_sig, signature):
+            logger.warning("Unauthorized webhook request: Invalid HMAC signature")
+            raise HTTPException(status_code=401, detail="Invalid HMAC signature")
+
+    try:
+        payload = json.loads(body_bytes.decode('utf-8'))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON payload")
     
     if event == "workflow_run":
         action = payload.get("action")
