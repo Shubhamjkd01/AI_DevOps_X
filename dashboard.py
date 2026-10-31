@@ -656,14 +656,14 @@ with hero_left:
     st.markdown("""
     <div class="hero-pill">
         <div class="pulsing-dot"></div>
-        BUILT FOR REPOSITORIES &bull; ENTERPRISE CI/CD &bull; TEAMS
+        100% OPEN SOURCE &bull; BUILT FOR DEVELOPER & DEVOPS COMMUNITIES
     </div>
     <div class="hero-title">
         CI/CD without chaos.<br>
         <span class="gradient-text">Fixed in seconds.</span>
     </div>
     <div class="hero-subtitle">
-        AI engine auto-intercepts GitHub Actions crashes, generates verified AST patches with Google Gemma 4, and deploys ready-to-merge Pull Requests.
+        Community-first, 100% open-source self-healing engine powered by Google Gemma 4 & Gemini. Auto-intercepts GitHub Actions crashes, generates AST-verified patches, and deploys ready-to-merge Pull Requests with zero vendor lock-in.
     </div>
     """, unsafe_allow_html=True)
 
