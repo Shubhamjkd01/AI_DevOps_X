@@ -18,19 +18,19 @@ st.set_page_config(
 )
 
 # ==========================================
-# FILE PATHS & DATA
+# FILE PATHS & DATA (CLEAN RELATIVE PATHS)
 # ==========================================
-SCORE_FILE = "c:/AI_DeVops/github_agent_backend/rl_scores.json"
-KNOWLEDGE_BASE_FILE = "c:/AI_DeVops/github_agent_backend/episodic_patch_memory.json"
-HOT_ZONES_FILE = "c:/AI_DeVops/github_agent_backend/hot_zones.json"
-API_URL = "http://localhost:7860"
-WEBHOOK_URL = f"{API_URL}/api/v1/webhook/github"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SCORE_FILE = os.path.join(BASE_DIR, "rl_scores.json")
+KNOWLEDGE_BASE_FILE = os.path.join(BASE_DIR, "episodic_patch_memory.json")
+HOT_ZONES_FILE = os.path.join(BASE_DIR, "hot_zones.json")
+API_URL = os.getenv("BACKEND_API_URL", "http://localhost:7860")
+WEBHOOK_URL = os.getenv("AGENT_WEBHOOK_URL", f"{API_URL}/api/v1/webhook/github")
 active_model = os.getenv("GEMMA_MODEL_NAME", "models/gemma-4-26b-a4b-it")
 
 def get_developer_img_base64():
     candidates = [
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "developer.png"),
-        "c:/AI_DeVops/github_agent_backend/developer.png",
+        os.path.join(BASE_DIR, "developer.png"),
         "developer.png"
     ]
     for p in candidates:
@@ -635,820 +635,991 @@ div[data-baseweb="tab-highlight"], div[data-baseweb="tab-border"] {
         </div>
     </div>
     <div class="nav-links">
-        <a href="#triage">LIVE TRIAGE</a>
-        <a href="#documentation">DOCUMENTATION</a>
+        <a href="#documentation">DOCUMENTATION & SETUP</a>
+        <a href="#security">DATA & CODE SECURITY</a>
         <a href="#about-author">ABOUT DEVELOPER</a>
     </div>
     <div>
         <a class="nav-btn" href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank">
-            ⭐ STAR ON GITHUB
+            ⭐ GITHUB REPO
         </a>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ==========================================
-# HERO SECTION (EXACT LAYOUT AS IMAGE)
-# ==========================================
-hero_left, hero_right = st.columns([1.1, 1], gap="large")
 
-with hero_left:
-    st.markdown("""
-    <div class="hero-pill">
-        <div class="pulsing-dot"></div>
-        BUILT FOR REPOSITORIES &bull; ENTERPRISE CI/CD &bull; TEAMS
-    </div>
-    <div class="hero-title">
-        CI/CD without chaos.<br>
-        <span class="gradient-text">Fixed in seconds.</span>
-    </div>
-    <div class="hero-subtitle">
-        AI engine auto-intercepts GitHub Actions crashes, generates verified AST patches with Google Gemma 4, and deploys ready-to-merge Pull Requests.
-    </div>
-    """, unsafe_allow_html=True)
-    
-    cta_col1, cta_col2 = st.columns([1, 1])
-    with cta_col1:
-        trigger_now = st.button("▶ TRIGGER GEMMA 4 FIX", key="hero_trigger")
-    with cta_col2:
+
+st.markdown("""
+<style>
+div[data-testid="stRadio"] > div {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    background: rgba(13, 17, 28, 0.6);
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 2.5rem;
+}
+div[data-testid="stRadio"] label {
+    background: transparent !important;
+    padding: 0.4rem 1.2rem !important;
+    border-radius: 9999px !important;
+    font-weight: 700 !important;
+    font-size: 0.86rem !important;
+    color: #94A3B8 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+div[data-testid="stRadio"] label:hover {
+    color: #38BDF8 !important;
+}
+div[data-testid="stRadio"] label[data-checked="true"],
+div[data-testid="stRadio"] div[aria-checked="true"] {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(139, 92, 246, 0.25)) !important;
+    color: #FFFFFF !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+nav_page = st.radio(
+    "Choose View",
+    [
+        "⚡ Live Self-Healing Engine",
+        "📖 Documentation & Laptop Setup Guide",
+        "🛡️ Data & Code Security Guarantee",
+        "👨‍💻 About Developer"
+    ],
+    horizontal=True,
+    label_visibility="collapsed"
+)
+
+
+if nav_page == "⚡ Live Self-Healing Engine":
+
+    hero_left, hero_right = st.columns([1.1, 1], gap="large")
+
+    with hero_left:
         st.markdown("""
-        <a href="https://github.com/Shubhamjkd01/AI_DevOps_X/pulls" target="_blank" style="
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #E2E8F0;
-            padding: 0.65rem 1.6rem;
-            border-radius: 9999px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-decoration: none;
-            text-align: center;
-            width: 100%;
-        ">
-            OPEN SAMPLE PRs ↗
-        </a>
-        """, unsafe_allow_html=True)
-        
-    st.markdown("""
-    <div style="font-size: 0.78rem; color: #64748B; margin-top: 1.25rem;">
-        Zero installation &bull; Runs on DigitalOcean App Platform &bull; Powered by Google Gemma 4
-    </div>
-    """, unsafe_allow_html=True)
-
-with hero_right:
-    st.markdown(f"""
-    <div class="code-window">
-        <div class="window-topbar">
-            <div class="dot dot-red"></div>
-            <div class="dot dot-yellow"></div>
-            <div class="dot dot-green"></div>
-            <div class="window-title">devops_engine.py</div>
+        <div class="hero-pill">
+            <div class="pulsing-dot"></div>
+            BUILT FOR REPOSITORIES &bull; ENTERPRISE CI/CD &bull; TEAMS
         </div>
-        <div class="terminal-block">
-            aidevops@engine:~$ <span>auto-triage CI failure in main.py at 10:02:14</span>
+        <div class="hero-title">
+            CI/CD without chaos.<br>
+            <span class="gradient-text">Fixed in seconds.</span>
         </div>
-        <div class="window-badges">
-            <div class="badge-pill">REALTIME AI PREVIEW</div>
-            <div class="badge-active">
-                <div class="pulsing-dot"></div>
-                Gemma 4 engine active
-            </div>
-        </div>
-        <table class="preview-table">
-            <thead>
-                <tr>
-                    <th>TARGET REPO</th>
-                    <th>FAULT CATEGORY</th>
-                    <th>ACTIVE ENGINE</th>
-                    <th>CONFIDENCE</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Shubhamjkd01/Nursesycn</td>
-                    <td><span class="chip-syntax">SyntaxError</span></td>
-                    <td><span class="chip-engine">Gemma 4 26B</span></td>
-                    <td><strong style="color: #34D399;">99.2%</strong></td>
-                </tr>
-                <tr>
-                    <td>Shubhamjkd01/AI_DevOps_X</td>
-                    <td><span class="chip-syntax">MissingDep</span></td>
-                    <td><span class="chip-engine">Gemma 4 31B</span></td>
-                    <td><strong style="color: #34D399;">98.5%</strong></td>
-                </tr>
-                <tr>
-                    <td>Edusentinel_collab</td>
-                    <td><span class="chip-syntax">Regression</span></td>
-                    <td><span class="chip-engine">FAISS Memory</span></td>
-                    <td><strong style="color: #34D399;">100.0%</strong></td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="ai-popover">
-            <div class="ai-popover-header">
-                🤖 AI Suggestion &bull; models/gemma-4-26b-a4b-it
-            </div>
-            <div class="ai-popover-text">
-                I've detected a missing colon on line 42, synthesized an AST-compliant patch, verified zero regressions in the sandbox, and prepared a Pull Request.
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# ==========================================
-# SECTION DIVIDER: SMARTER. FASTER. AUTOMATIC.
-# ==========================================
-st.markdown("""
-<div class="section-header" id="architecture">
-    <div class="section-tag">WHY AUTONOMOUS AI DEVOPS?</div>
-    <div class="section-title">Smarter. Faster. Automatic.</div>
-    <div class="section-desc">Zero manual debugging. AST Hallucination Guard. Production-grade patches.</div>
-</div>
-""", unsafe_allow_html=True)
-
-# Render 3 Metric Cards
-m_col1, m_col2, m_col3 = st.columns(3)
-with m_col1:
-    st.markdown(f"""
-    <div class="metric-box">
-        <div class="metric-lbl">Mean Time to Repair (MTTR)</div>
-        <div class="metric-val">{ai_avg_mttr_sec:.1f} sec</div>
-        <div class="metric-delta">↓ Saved 45 mins developer downtime</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with m_col2:
-    st.markdown(f"""
-    <div class="metric-box">
-        <div class="metric-lbl">FAISS Vector Memory Hit Rate</div>
-        <div class="metric-val">{hit_rate:.1f}%</div>
-        <div class="metric-delta">↑ 768-dim L2 tensor reuse</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with m_col3:
-    st.markdown(f"""
-    <div class="metric-box">
-        <div class="metric-lbl">Developer Cost Saved</div>
-        <div class="metric-val">${saved_cost:,}</div>
-        <div class="metric-delta">↑ Enterprise engineering hours preserved</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<div style='margin-bottom: 3.5rem;'></div>", unsafe_allow_html=True)
-
-# ==========================================
-# 1. INTERACTIVE COMMAND CENTER & LIVE TRIAGE
-# ==========================================
-st.markdown("""
-<div class="section-header" id="triage">
-    <div class="section-tag">LIVE INTERACTIVE ENGINE</div>
-    <div class="section-title">Failure Simulation & Visual Diagnostics</div>
-    <div class="section-desc">Test real-time stack trace triage, upload error screenshots for Gemma 4 visual inspection, and inspect FAISS episodic memory.</div>
-</div>
-""", unsafe_allow_html=True)
-
-col_exec, col_visual = st.columns([1.1, 1], gap="large")
-
-with col_exec:
-    st.markdown("### 🎛️ Live CI/CD Failure Triage Execution")
-    
-    cfg1, cfg2 = st.columns(2)
-    with cfg1:
-        target_repo = st.selectbox("🎯 Target GitHub Repository", ["Shubhamjkd01/Nursesycn", "Shubhamjkd01/AI_DevOps_X", "Shubhamjkd01/edusentinel-v3"])
-    with cfg2:
-        fail_scenario = st.selectbox("⚡ Simulated Crash Scenario", ["SyntaxError on main.py", "MissingDependency in requirements.txt", "Multi-file Regression"])
-        
-    exec_button = st.button("🚀 EXECUTE AUTONOMOUS HEALING RUN", key="exec_run", use_container_width=True)
-
-    if trigger_now or exec_button:
-        sim_time = random.uniform(3.8, 5.9)
-        conf_score = random.randint(92, 99)
-        
-        # Async Backend Webhook Trigger
-        try:
-            requests.post(
-                WEBHOOK_URL,
-                headers={"X-GitHub-Event": "workflow_run"},
-                json={
-                    "action": "completed",
-                    "workflow_run": {"id": random.randint(10000, 99999), "status": "completed", "conclusion": "failure"},
-                    "repository": {"full_name": target_repo},
-                    "mock_fail_type": "syntax",
-                    "llm_priority": "Google Gemma 4 (Primary)"
-                },
-                timeout=2
-            )
-        except Exception:
-            pass
-            
-        progress = st.progress(10, text="1/5: GitHub Actions failure webhook intercepted...")
-        time.sleep(0.6)
-        progress.progress(35, text="2/5: Google Gemma 4 analyzing stack trace context...")
-        time.sleep(0.8)
-        progress.progress(65, text="3/5: Querying FAISS 768-dim episodic memory...")
-        time.sleep(0.7)
-        progress.progress(85, text="4/5: AST Hallucination Guard & Docker Sandbox regression pass...")
-        time.sleep(0.6)
-        progress.progress(100, text="5/5: Automated Pull Request Created! 🎉")
-        
-        st.success(f"""
-        **✅ Fix Synthesized & Deployed!**  
-        - **🤖 Verified Model:** `{active_model}`  
-        - **⏱ Execution Time:** `{sim_time:.1f}s` (Auto-resolved)  
-        - **🎯 Math Confidence:** `{conf_score}%`  
-        - **🛡️ AST Safety Guard:** `Zero Hallucinations & Zero Dangerous Calls`
-        """)
-        st.code(f"Created Branch: fix/workflow-auto-heal\nPushed to: https://github.com/{target_repo}/pull/new", language="bash")
-
-with col_visual:
-    st.markdown("### 📸 Multimodal Crash Screenshot Triage")
-    st.caption("Upload a screenshot of any terminal error or CI failure. Gemma 4 will visually inspect the error.")
-    
-    uploaded_image = st.file_uploader("Drop failure screenshot here", type=["png", "jpg", "jpeg"])
-    if uploaded_image:
-        st.image(uploaded_image, caption="Uploaded Crash Screenshot", use_container_width=True)
-        if st.button("🔍 DIAGNOSE WITH GEMMA 4", key="diag_btn", use_container_width=True):
-            with st.spinner("Gemma 4 is inspecting screenshot pixels..."):
-                try:
-                    from services.llm import analyze_screenshot_with_gemma
-                    diag_text, model_name = analyze_screenshot_with_gemma(uploaded_image.getvalue())
-                    st.success(f"**Diagnosed by:** `{model_name}`")
-                    st.markdown(diag_text)
-                except Exception as e:
-                    st.error(f"Multimodal error: {e}")
-
-st.markdown("<div style='margin-bottom: 2.5rem;'></div>", unsafe_allow_html=True)
-
-# FAISS Memory & Run Table
-st.markdown("### 🗄️ FAISS Episodic Memory & Verifiable Run History")
-if memory:
-    mem_data = []
-    for i, m in enumerate(reversed(memory[:8])):
-        mem_data.append({
-            "RL Reward": "✅ +1.0" if m.get("accepted") else "❌ -1.0",
-            "Model Used": m.get("model_used") or active_model,
-            "Triage Status": "⭐ Verified Fix" if m.get("accepted") else "🚨 Iteration",
-            "Category": m.get("failure_category", "SyntaxError"),
-            "Error Snippet": m.get("error", "Pipeline failure")[:65] + "..."
-        })
-    df = pd.DataFrame(mem_data)
-    st.dataframe(df, use_container_width=True, hide_index=True)
-else:
-    st.info("FAISS vector tensor map is active and ready to log memory iterations.")
-
-st.markdown("<div style='margin-bottom: 4.5rem;'></div>", unsafe_allow_html=True)
-
-# ==========================================
-# 2. CONSOLIDATED DOCUMENTATION & SETUP GUIDANCE
-# ==========================================
-st.markdown("""
-<div class="section-header" id="documentation">
-    <div class="section-tag">DOCUMENTATION & SETUP GUIDANCE</div>
-    <div class="section-title">Developer Integration & Architecture</div>
-    <div class="section-desc">Complete guide to connecting repositories via webhooks, installing locally, exploring architecture, and reviewing security.</div>
-</div>
-""", unsafe_allow_html=True)
-
-doc_tab1, doc_tab2, doc_tab3, doc_tab4, doc_tab5, doc_tab6 = st.tabs([
-    "🔗 Connect GitHub (Webhook Setup)",
-    "💻 Local Installation (CLI & Docker)",
-    "💡 Developer Setup Tips & Multi-Repo",
-    "🏗️ Multi-Agent Architecture & Endpoints",
-    "🛡️ Enterprise Security & Zero-Trust",
-    "🧪 Live Webhook Ping Tester"
-])
-
-with doc_tab1:
-    st.markdown("""
-    <div class="guide-card guide-card-cyan">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
-            <div>
-                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">🔗 Connect Your Repository via GitHub Webhooks</h3>
-                <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
-                    When your GitHub Actions CI fails, GitHub automatically notifies this agent. Gemma 4 writes an AST-verified patch and opens a ready-to-merge Pull Request.
-                </p>
-            </div>
-            <span style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.4); color: #22D3EE; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
-                ● NO CODE CHANGES NEEDED
-            </span>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    g_col1, g_col2 = st.columns([1.1, 1], gap="medium")
-    with g_col1:
-        user_repo = st.text_input("1️⃣ Enter Your GitHub Repository (Owner/Repo)", value="Shubhamjkd01/Nursesycn", placeholder="e.g. your-org/your-repo", key="user_repo_input")
-        server_choice = st.selectbox(
-            "2️⃣ Select Your Agent Backend Host",
-            [
-                "Hosted Cloud Server (DigitalOcean / Production)",
-                "Local Machine via Ngrok Tunnel (https://xxxx.ngrok-free.app)",
-                "Local Machine Direct (http://localhost:7860)"
-            ],
-            key="server_choice_select"
-        )
-        
-        if "DigitalOcean" in server_choice:
-            webhook_target = "https://aidevops-backend.ondigitalocean.app/api/v1/webhook/github"
-        elif "Ngrok" in server_choice:
-            ngrok_subdomain = st.text_input("Enter your Ngrok Domain / URL", value="https://ai-devops.ngrok-free.app", key="ngrok_subdomain_input")
-            webhook_target = f"{ngrok_subdomain.rstrip('/')}/api/v1/webhook/github"
-        else:
-            webhook_target = "http://localhost:7860/api/v1/webhook/github"
-            
-    with g_col2:
-        st.markdown(f"""
-        <div class="config-preview-box">
-            <div style="color: #64748B; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">
-                📋 Ready-to-Copy GitHub Webhook Settings:
-            </div>
-            <div style="margin-bottom: 0.4rem;">
-                <span class="config-label">Payload URL:</span>
-                <span style="color: #F8FAFC; word-break: break-all;">{webhook_target}</span>
-            </div>
-            <div style="margin-bottom: 0.4rem;">
-                <span class="config-label">Content type:</span>
-                <span style="color: #38BDF8; font-weight: 700;">application/json</span>
-            </div>
-            <div style="margin-bottom: 0.4rem;">
-                <span class="config-label">Secret:</span>
-                <span style="color: #F8FAFC;">(Optional / matching your .env)</span>
-            </div>
-            <div>
-                <span class="config-label">SSL verification:</span>
-                <span style="color: #34D399; font-weight: 700;">Enable SSL</span>
-            </div>
+        <div class="hero-subtitle">
+            AI engine auto-intercepts GitHub Actions crashes, generates verified AST patches with Google Gemma 4, and deploys ready-to-merge Pull Requests.
         </div>
         """, unsafe_allow_html=True)
-        
-        st.markdown(f"""
-        <div style="margin-top: 0.8rem;">
-            <a href="https://github.com/{user_repo}/settings/hooks/new" target="_blank" style="
-                display: block;
-                text-align: center;
-                background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
-                color: #FFFFFF !important;
-                padding: 0.65rem 1.2rem;
+
+        cta_col1, cta_col2 = st.columns([1, 1])
+        with cta_col1:
+            trigger_now = st.button("▶ TRIGGER GEMMA 4 FIX", key="hero_trigger")
+        with cta_col2:
+            st.markdown("""
+            <a href="https://github.com/Shubhamjkd01/AI_DevOps_X/pulls" target="_blank" style="
+                display: inline-block;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                color: #E2E8F0;
+                padding: 0.65rem 1.6rem;
                 border-radius: 9999px;
                 font-weight: 700;
                 font-size: 0.85rem;
                 text-decoration: none;
-                box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+                text-align: center;
+                width: 100%;
             ">
-                ⚡ Open GitHub Webhook Settings for {user_repo} ↗
+                OPEN SAMPLE PRs ↗
             </a>
+            """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="font-size: 0.78rem; color: #64748B; margin-top: 1.25rem;">
+            Zero installation &bull; Runs on DigitalOcean App Platform &bull; Powered by Google Gemma 4
         </div>
         """, unsafe_allow_html=True)
-        
+
+    with hero_right:
+        st.markdown(f"""
+        <div class="code-window">
+            <div class="window-topbar">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+                <div class="window-title">devops_engine.py</div>
+            </div>
+            <div class="terminal-block">
+                aidevops@engine:~$ <span>auto-triage CI failure in main.py at 10:02:14</span>
+            </div>
+            <div class="window-badges">
+                <div class="badge-pill">REALTIME AI PREVIEW</div>
+                <div class="badge-active">
+                    <div class="pulsing-dot"></div>
+                    Gemma 4 engine active
+                </div>
+            </div>
+            <table class="preview-table">
+                <thead>
+                    <tr>
+                        <th>TARGET REPO</th>
+                        <th>FAULT CATEGORY</th>
+                        <th>ACTIVE ENGINE</th>
+                        <th>CONFIDENCE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Shubhamjkd01/Nursesycn</td>
+                        <td><span class="chip-syntax">SyntaxError</span></td>
+                        <td><span class="chip-engine">Gemma 4 26B</span></td>
+                        <td><strong style="color: #34D399;">99.2%</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Shubhamjkd01/AI_DevOps_X</td>
+                        <td><span class="chip-syntax">MissingDep</span></td>
+                        <td><span class="chip-engine">Gemma 4 31B</span></td>
+                        <td><strong style="color: #34D399;">98.5%</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Edusentinel_collab</td>
+                        <td><span class="chip-syntax">Regression</span></td>
+                        <td><span class="chip-engine">FAISS Memory</span></td>
+                        <td><strong style="color: #34D399;">100.0%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="ai-popover">
+                <div class="ai-popover-header">
+                    🤖 AI Suggestion &bull; models/gemma-4-26b-a4b-it
+                </div>
+                <div class="ai-popover-text">
+                    I've detected a missing colon on line 42, synthesized an AST-compliant patch, verified zero regressions in the sandbox, and prepared a Pull Request.
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # ==========================================
+    # SECTION DIVIDER: SMARTER. FASTER. AUTOMATIC.
+    # ==========================================
     st.markdown("""
-    <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 1.8rem 0 1.2rem 0;"></div>
-    <h4 style="color: #FFFFFF; font-size: 1.05rem; margin-bottom: 1.2rem;">📌 4-Step GitHub Setup Guide</h4>
-    
-    <div class="step-item">
-        <div class="step-badge step-badge-cyan">1</div>
-        <div class="step-content">
-            <div class="step-heading">Open Repository Webhook Settings</div>
-            <div class="step-subtext">
-                Go to your GitHub repository &rarr; click <strong>Settings</strong> tab &rarr; in the left sidebar click <strong>Webhooks</strong> &rarr; click the <strong>Add webhook</strong> button.
-            </div>
-        </div>
-    </div>
-    
-    <div class="step-item">
-        <div class="step-badge step-badge-cyan">2</div>
-        <div class="step-content">
-            <div class="step-heading">Configure Payload URL & Content Type</div>
-            <div class="step-subtext">
-                Paste the <strong>Payload URL</strong> generated in the box above.<br>
-                Change <strong>Content type</strong> from <code>application/x-www-form-urlencoded</code> to <strong><code>application/json</code></strong>.
-            </div>
-        </div>
-    </div>
-    
-    <div class="step-item">
-        <div class="step-badge step-badge-cyan">3</div>
-        <div class="step-content">
-            <div class="step-heading">Select Individual Trigger Events</div>
-            <div class="step-subtext">
-                Under <em>"Which events would you like to trigger this webhook?"</em>, choose <strong>Let me select individual events</strong>.<br>
-                Check the following 3 events:
-                <ul style="margin: 0.4rem 0 0 1.2rem; padding: 0;">
-                    <li><strong style="color: #38BDF8;">Workflow runs</strong> &mdash; Triggers Gemma 4 when your CI/CD job fails.</li>
-                    <li><strong style="color: #38BDF8;">Check suites</strong> &mdash; Monitors GitHub Actions test suites.</li>
-                    <li><strong style="color: #38BDF8;">Pull requests</strong> &mdash; Tracks PR merges/closures for reinforcement learning feedback.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    
-    <div class="step-item">
-        <div class="step-badge step-badge-cyan">4</div>
-        <div class="step-content">
-            <div class="step-heading">Save and Verify</div>
-            <div class="step-subtext">
-                Make sure <strong>Active</strong> is checked, then click <strong>Add webhook</strong>.<br>
-                GitHub will send an initial <code>ping</code> event with a green checkmark indicating successful connection!
-            </div>
-        </div>
-    </div>
+    <div class="section-header" id="architecture">
+        <div class="section-tag">WHY AUTONOMOUS AI DEVOPS?</div>
+        <div class="section-title">Smarter. Faster. Automatic.</div>
+        <div class="section-desc">Zero manual debugging. AST Hallucination Guard. Production-grade patches.</div>
     </div>
     """, unsafe_allow_html=True)
 
-with doc_tab2:
+    # Render 3 Metric Cards
+    m_col1, m_col2, m_col3 = st.columns(3)
+    with m_col1:
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-lbl">Mean Time to Repair (MTTR)</div>
+            <div class="metric-val">{ai_avg_mttr_sec:.1f} sec</div>
+            <div class="metric-delta">↓ Saved 45 mins developer downtime</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m_col2:
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-lbl">FAISS Vector Memory Hit Rate</div>
+            <div class="metric-val">{hit_rate:.1f}%</div>
+            <div class="metric-delta">↑ 768-dim L2 tensor reuse</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m_col3:
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-lbl">Developer Cost Saved</div>
+            <div class="metric-val">${saved_cost:,}</div>
+            <div class="metric-delta">↑ Enterprise engineering hours preserved</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<div style='margin-bottom: 3.5rem;'></div>", unsafe_allow_html=True)
+
+    # ==========================================
+    # 1. INTERACTIVE COMMAND CENTER & LIVE TRIAGE
+    # ==========================================
     st.markdown("""
-    <div class="guide-card guide-card-purple" id="local-install">
+    <div class="section-header" id="triage">
+        <div class="section-tag">LIVE INTERACTIVE ENGINE</div>
+        <div class="section-title">Failure Simulation & Visual Diagnostics</div>
+        <div class="section-desc">Test real-time stack trace triage, upload error screenshots for Gemma 4 visual inspection, and inspect FAISS episodic memory.</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_exec, col_visual = st.columns([1.1, 1], gap="large")
+
+    with col_exec:
+        st.markdown("### 🎛️ Live CI/CD Failure Triage Execution")
+
+        cfg1, cfg2 = st.columns(2)
+        with cfg1:
+            target_repo = st.selectbox("🎯 Target GitHub Repository", ["Shubhamjkd01/Nursesycn", "Shubhamjkd01/AI_DevOps_X", "Shubhamjkd01/edusentinel-v3"])
+        with cfg2:
+            fail_scenario = st.selectbox("⚡ Simulated Crash Scenario", ["SyntaxError on main.py", "MissingDependency in requirements.txt", "Multi-file Regression"])
+
+        exec_button = st.button("🚀 EXECUTE AUTONOMOUS HEALING RUN", key="exec_run", use_container_width=True)
+
+        if trigger_now or exec_button:
+            sim_time = random.uniform(3.8, 5.9)
+            conf_score = random.randint(92, 99)
+
+            # Async Backend Webhook Trigger
+            try:
+                requests.post(
+                    WEBHOOK_URL,
+                    headers={"X-GitHub-Event": "workflow_run"},
+                    json={
+                        "action": "completed",
+                        "workflow_run": {"id": random.randint(10000, 99999), "status": "completed", "conclusion": "failure"},
+                        "repository": {"full_name": target_repo},
+                        "mock_fail_type": "syntax",
+                        "llm_priority": "Google Gemma 4 (Primary)"
+                    },
+                    timeout=2
+                )
+            except Exception:
+                pass
+
+            progress = st.progress(10, text="1/5: GitHub Actions failure webhook intercepted...")
+            time.sleep(0.6)
+            progress.progress(35, text="2/5: Google Gemma 4 analyzing stack trace context...")
+            time.sleep(0.8)
+            progress.progress(65, text="3/5: Querying FAISS 768-dim episodic memory...")
+            time.sleep(0.7)
+            progress.progress(85, text="4/5: AST Hallucination Guard & Docker Sandbox regression pass...")
+            time.sleep(0.6)
+            progress.progress(100, text="5/5: Automated Pull Request Created! 🎉")
+
+            st.success(f"""
+            **✅ Fix Synthesized & Deployed!**  
+            - **🤖 Verified Model:** `{active_model}`  
+            - **⏱ Execution Time:** `{sim_time:.1f}s` (Auto-resolved)  
+            - **🎯 Math Confidence:** `{conf_score}%`  
+            - **🛡️ AST Safety Guard:** `Zero Hallucinations & Zero Dangerous Calls`
+            """)
+            st.code(f"Created Branch: fix/workflow-auto-heal\nPushed to: https://github.com/{target_repo}/pull/new", language="bash")
+
+    with col_visual:
+        st.markdown("### 📸 Multimodal Crash Screenshot Triage")
+        st.caption("Upload a screenshot of any terminal error or CI failure. Gemma 4 will visually inspect the error.")
+
+        uploaded_image = st.file_uploader("Drop failure screenshot here", type=["png", "jpg", "jpeg"])
+        if uploaded_image:
+            st.image(uploaded_image, caption="Uploaded Crash Screenshot", use_container_width=True)
+            if st.button("🔍 DIAGNOSE WITH GEMMA 4", key="diag_btn", use_container_width=True):
+                with st.spinner("Gemma 4 is inspecting screenshot pixels..."):
+                    try:
+                        from services.llm import analyze_screenshot_with_gemma
+                        diag_text, model_name = analyze_screenshot_with_gemma(uploaded_image.getvalue())
+                        st.success(f"**Diagnosed by:** `{model_name}`")
+                        st.markdown(diag_text)
+                    except Exception as e:
+                        st.error(f"Multimodal error: {e}")
+
+    st.markdown("<div style='margin-bottom: 2.5rem;'></div>", unsafe_allow_html=True)
+
+    # FAISS Memory & Run Table
+    st.markdown("### 🗄️ FAISS Episodic Memory & Verifiable Run History")
+    if memory:
+        mem_data = []
+        for i, m in enumerate(reversed(memory[:8])):
+            mem_data.append({
+                "RL Reward": "✅ +1.0" if m.get("accepted") else "❌ -1.0",
+                "Model Used": m.get("model_used") or active_model,
+                "Triage Status": "⭐ Verified Fix" if m.get("accepted") else "🚨 Iteration",
+                "Category": m.get("failure_category", "SyntaxError"),
+                "Error Snippet": m.get("error", "Pipeline failure")[:65] + "..."
+            })
+        df = pd.DataFrame(mem_data)
+        st.dataframe(df, use_container_width=True, hide_index=True)
+    else:
+        st.info("FAISS vector tensor map is active and ready to log memory iterations.")
+
+    st.markdown("<div style='margin-bottom: 4.5rem;'></div>", unsafe_allow_html=True)
+
+
+
+elif nav_page == "📖 Documentation & Laptop Setup Guide":
+
+    st.markdown("""
+    <div class="guide-card guide-card-pink" style="margin-bottom: 2rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
             <div>
-                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">💻 Install & Run Locally on Your Machine</h3>
+                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.3rem;">📁 Where to Change & What to Edit on Your Laptop</h3>
                 <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
-                    Run the autonomous FastAPI agent backend and Streamlit dashboard locally on your system using Python or Docker.
+                    Exact file-by-file developer reference. The only 4 files you ever need to touch when setting up on your machine.
                 </p>
             </div>
-            <span style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #C084FC; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
-                ● 100% OPEN-WEIGHT GEMMA 4
+            <span style="background: rgba(236, 72, 153, 0.15); border: 1px solid rgba(236, 72, 153, 0.4); color: #F472B6; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                ● CRITICAL REFERENCE
             </span>
         </div>
-    """, unsafe_allow_html=True)
-    
-    os_tab1, os_tab2, os_tab3 = st.tabs(["🪟 Windows (PowerShell)", "🍎 macOS & 🐧 Linux", "🐳 Docker Compose (1-Click)"])
-    
-    with os_tab1:
-        st.markdown("""
-        **Step 1: Clone the repository:**
-        ```powershell
-        git clone https://github.com/Shubhamjkd01/AI_DevOps_X.git
-        cd AI_DevOps_X
-        ```
-        
-        **Step 2: Create a virtual environment & install dependencies:**
-        ```powershell
-        python -m venv venv
-        .\\venv\\Scripts\\activate
-        pip install -r requirements.txt
-        ```
-        
-        **Step 3: Create your `.env` configuration file:**
-        Create a file named `.env` in the repository root directory:
-        ```env
-        # 1. Google Gemma 4 Configuration (Get free key at https://aistudio.google.com/)
-        GEMINI_API_KEY=AIzaSy...your_gemini_api_key_here
-        GEMMA_MODEL_NAME=models/gemma-4-26b-a4b-it
 
-        # 2. GitHub Personal Access Token (PAT with 'repo' & 'workflow' permissions)
-        # Generate at https://github.com/settings/tokens
-        GITHUB_TOKEN=ghp_your_github_token_here
-        GITHUB_WEBHOOK_SECRET=mysecretkey123
-        ```
-        
-        **Step 4: Start the Backend API Server:**
-        ```powershell
-        python -m uvicorn server.app:app --host 0.0.0.0 --port 7860 --reload
-        ```
-        
-        **Step 5: Start the Streamlit Dashboard (in a second terminal):**
-        ```powershell
-        python -m streamlit run dashboard.py --server.port 8501
-        ```
-        
-        **Step 6: (Optional) Connect to real GitHub Actions using Ngrok:**
-        ```powershell
-        ngrok http 7860
-        ```
-        *Copy your public HTTPS URL (e.g. `https://xxxx.ngrok-free.app/api/v1/webhook/github`) into your GitHub repository's Webhook settings!*
-        """)
-        
-    with os_tab2:
-        st.markdown("""
-        **Step 1: Clone and navigate to repo:**
-        ```bash
-        git clone https://github.com/Shubhamjkd01/AI_DevOps_X.git
-        cd AI_DevOps_X
-        ```
-        
-        **Step 2: Set up virtualenv and install packages:**
-        ```bash
-        python3 -m venv venv
-        source venv/bin/activate
-        pip install -r requirements.txt
-        ```
-        
-        **Step 3: Create `.env`:**
-        ```bash
-        cat << 'EOF' > .env
-        GEMINI_API_KEY=AIzaSy...your_gemini_api_key_here
-        GEMMA_MODEL_NAME=models/gemma-4-26b-a4b-it
-        GITHUB_TOKEN=ghp_your_github_token_here
-        GITHUB_WEBHOOK_SECRET=mysecretkey123
-        EOF
-        ```
-        
-        **Step 4: Run Backend & Dashboard:**
-        ```bash
-        # Terminal 1 (Backend Engine):
-        uvicorn server.app:app --host 0.0.0.0 --port 7860 --reload
-
-        # Terminal 2 (Streamlit UI):
-        streamlit run dashboard.py --server.port 8501
-        ```
-        """)
-        
-    with os_tab3:
-        st.markdown("""
-        **Run the entire stack in one command with Docker:**
-        ```bash
-        docker compose up --build -d
-        ```
-        - Backend API ready at: `http://localhost:7860`
-        - Streamlit Dashboard ready at: `http://localhost:8501`
-        """)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with doc_tab3:
-    st.markdown("""
-    <div class="guide-card" style="border-top: 3px solid #EC4899;" id="dev-tips">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
-            <div>
-                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">💡 Open-Source Setup Tips & Best Practices for Developers</h3>
-                <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
-                    Key tips, free quota optimization, multi-repo routing, and contribution workflows.
-                </p>
-            </div>
-            <a href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank" class="dev-btn dev-btn-primary" style="font-size: 0.78rem; padding: 0.35rem 0.9rem;">
-                ⭐ Fork & Star on GitHub
-            </a>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    t_col1, t_col2 = st.columns(2, gap="medium")
-    with t_col1:
-        st.markdown("""
-        #### 1️⃣ Connect Multiple Repositories to a Single Agent
-        You do not need to deploy separate server instances for each repository. One deployed instance of AI_DevOps_X can handle **unlimited repositories**:
-        - In each repository's settings (`Settings -> Webhooks -> Add Webhook`), paste the same **Payload URL** (`https://<your-deploy-url>/webhook`).
-        - The agent extracts the repository name dynamically from `payload["repository"]["full_name"]` and opens branches and PRs in the correct repository automatically!
-        
-        #### 2️⃣ Free-Tier Google Gemma 4 API (Zero Billing)
-        You do **not** need a paid cloud account to run Gemma 4:
-        - Head over to **[Google AI Studio](https://aistudio.google.com/)** and click **Get API Key**.
-        - Google offers a generous **free tier** (15 RPM / 1M TPM) for Gemma 4 models.
-        - Add `GEMINI_API_KEY=AIzaSy...` in your `.env` or deployment environment variables, and you're ready to go!
-        
-        #### 3️⃣ Test Locally Before Pushing with Ngrok
-        Want to test incoming GitHub Actions webhooks on your local computer before deploying?
-        ```bash
-        # Start local backend on port 7860
-        uvicorn server.app:app --port 7860
-        # Expose port 7860 with ngrok
-        ngrok http 7860
-        ```
-        Copy the `https://xxxx.ngrok-free.app/webhook` URL into your GitHub Webhook settings. When your CI fails, GitHub will trigger your local machine directly!
-        """)
-        
-    with t_col2:
-        st.markdown("""
-        #### 4️⃣ Environment Configuration Matrix
-        Create your `.env` file with these keys:
-        ```env
-        # Primary Open-Weight LLM
-        GEMINI_API_KEY=your_gemini_api_key_here
-        GEMMA_MODEL_NAME=models/gemma-4-26b-a4b-it
-
-        # GitHub Automation Credentials
-        GITHUB_TOKEN=ghp_your_github_token_here
-        GITHUB_WEBHOOK_SECRET=your_secret_passphrase
-
-        # Optional Flags
-        DRY_RUN_MODE=false        # Set true to test without opening PRs
-        AGENT_PORT=7860
-        ```
-        
-        #### 5️⃣ Contributing to AI_DevOps_X
-        This is a 100% open-source project and community contributions are warmly welcomed:
-        - **Bug Reports & Issues:** Submit detailed logs or edge cases in [GitHub Issues](https://github.com/Shubhamjkd01/AI_DevOps_X/issues).
-        - **New Agents & Graders:** Add language support (Go, Rust, TypeScript) under `/agents/` or `/tasks/`.
-        - **Pull Requests:** Fork `Shubhamjkd01/AI_DevOps_X`, create a feature branch, and submit a PR!
-        """)
-        
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with doc_tab4:
-    st.markdown("""
-    <div class="guide-card" style="border-top: 3px solid #8B5CF6;">
-        <h4 style="color: #FFFFFF; font-size: 1.15rem; margin-top: 0;">⚡ 5-Tier Agentic Pipeline Workflow</h4>
-        <div class="step-item">
-            <div class="step-badge" style="background: #3B82F6;">1</div>
-            <div class="step-content">
-                <div class="step-heading">Ingestion & Triage</div>
-                <div class="step-subtext">GitHub webhook delivers failure event &rarr; HMAC SHA-256 signature is verified &rarr; logs are downloaded and parsed into structured AST failure frames.</div>
-            </div>
-        </div>
-        <div class="step-item">
-            <div class="step-badge" style="background: #8B5CF6;">2</div>
-            <div class="step-content">
-                <div class="step-heading">FAISS Tensor Memory Retrieval</div>
-                <div class="step-subtext">Queries 768-dimensional L2 tensor embeddings of previously accepted fixes. If a similar failure was resolved before, historical context is injected into Gemma 4's prompt.</div>
-            </div>
-        </div>
-        <div class="step-item">
-            <div class="step-badge" style="background: #EC4899;">3</div>
-            <div class="step-content">
-                <div class="step-heading">Gemma 4 AST Patch Synthesis</div>
-                <div class="step-subtext">Google Gemma 4 (<code>models/gemma-4-26b-a4b-it</code>) reasons over repository AST context to generate a surgical, minimal patch targeting the root cause.</div>
-            </div>
-        </div>
-        <div class="step-item">
-            <div class="step-badge" style="background: #10B981;">4</div>
-            <div class="step-content">
-                <div class="step-heading">AST Safety Guard & Docker Sandbox</div>
-                <div class="step-subtext">Python <code>ast.parse()</code> verifies syntactic validity and blocks dangerous functions (<code>os.system</code>, <code>eval</code>). Ephemeral Docker sandbox runs pytest to verify zero regressions.</div>
-            </div>
-        </div>
-        <div class="step-item">
-            <div class="step-badge" style="background: #06B6D4;">5</div>
-            <div class="step-content">
-                <div class="step-heading">3-Tier Judge & Automated PR</div>
-                <div class="step-subtext">Junior/Senior/Principal LLM Judge evaluates patch quality. If score &ge; 0.5, PR Agent creates branch <code>fix/workflow-{run_id}</code> and opens a ready-to-merge Pull Request.</div>
-            </div>
-        </div>
-        
-        <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 1.5rem 0 1rem 0;"></div>
-        <h4 style="color: #FFFFFF; font-size: 1.05rem;">🌐 Core REST Endpoints</h4>
-        <div style="font-size: 0.85rem; color: #CBD5E1; line-height: 1.6;">
-            <p><strong><code>POST /webhook</code> or <code>/api/v1/webhook/github</code></strong> &mdash; Receives GitHub Action crash webhooks. Triggers background triage and PR synthesis.</p>
-            <p><strong><code>GET /health</code></strong> &mdash; Returns system health, active Gemma 4 model verification, and readiness status.</p>
-            <p><strong><code>GET /tasks</code></strong> &mdash; Returns active OpenEnv benchmark tasks and grading callables.</p>
-            <p><strong><code>POST /grade</code></strong> &mdash; Executes task graders dynamically against candidate patch diffs.</p>
-            <p><strong><code>POST /reset</code> & <code>POST /step</code></strong> &mdash; Core OpenEnv reinforcement learning simulation environment endpoints.</p>
-        </div>
-        <div style="margin-top: 1rem;">
-            <a href="http://localhost:7860/docs" target="_blank" class="dev-btn dev-btn-secondary" style="font-size: 0.8rem;">
-                📚 Open Swagger API Docs (/docs) ↗
-            </a>
-        </div>
+        <table class="preview-table" style="margin-top: 1rem;">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">FILE PATH</th>
+                    <th style="width: 30%;">VARIABLES / KEYS TO EDIT</th>
+                    <th style="width: 45%;">WHY & WHEN TO CHANGE IT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong style="color: #F472B6;">.env</strong><br><span style="font-size: 0.72rem; color: #EC4899; font-weight: 700;">★ MOST IMPORTANT</span></td>
+                    <td>
+                        <code>GEMINI_API_KEY</code><br>
+                        <code>GITHUB_TOKEN</code><br>
+                        <code>GITHUB_WEBHOOK_SECRET</code>
+                    </td>
+                    <td style="color: #CBD5E1; font-size: 0.84rem;">
+                        <strong>1.</strong> Paste your free key from Google AI Studio.<br>
+                        <strong>2.</strong> Add GitHub Personal Access Token (PAT) with <code>Actions: Read</code> and <code>Pull Requests: Read/Write</code>.<br>
+                        <strong>3.</strong> Set a webhook secret password. Never commit this file to git!
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong style="color: #38BDF8;">server/config.py</strong></td>
+                    <td>
+                        <code>MODEL_NAME = "gemini-2.5-pro"</code><br>
+                        <code>TEMPERATURE = 0.2</code><br>
+                        <code>DEFAULT_PORT = 7860</code>
+                    </td>
+                    <td style="color: #CBD5E1; font-size: 0.84rem;">
+                        Switch models (e.g. <code>gemini-1.5-flash</code> for 3x speed or <code>gemini-2.5-pro</code> for multi-file deep reasoning), adjust sampling temperature, or change the backend port.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong style="color: #C084FC;">github_agent/agent.py</strong></td>
+                    <td>
+                        <code>BRANCH_PREFIX = "fix/ci-failure-"</code><br>
+                        <code>AST_CHECK_ENABLED = True</code>
+                    </td>
+                    <td style="color: #CBD5E1; font-size: 0.84rem;">
+                        Configure your team's custom branch naming convention (e.g. <code>hotfix/ci-</code> or <code>bot/fix-</code>) or tune commit and pull request body templates.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong style="color: #34D399;">server/app.py</strong></td>
+                    <td>
+                        <code>/webhook/github</code> route<br>
+                        Slack / Discord webhooks
+                    </td>
+                    <td style="color: #CBD5E1; font-size: 0.84rem;">
+                        Add custom team notifications to ping Slack, Microsoft Teams, or Discord channels whenever a PR is created.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     """, unsafe_allow_html=True)
 
-with doc_tab5:
+
     st.markdown("""
+    <div class="section-header" id="documentation">
+        <div class="section-tag">DOCUMENTATION & SETUP GUIDANCE</div>
+        <div class="section-title">Developer Integration & Architecture</div>
+        <div class="section-desc">Complete guide to connecting repositories via webhooks, installing locally, exploring architecture, and reviewing security.</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    doc_tab1, doc_tab2, doc_tab3, doc_tab4, doc_tab5 = st.tabs([
+        "🔗 Connect GitHub (Webhook Setup)",
+        "💻 Local Installation (CLI & Docker)",
+        "💡 Developer Setup Tips & Multi-Repo",
+        "🏗️ Multi-Agent Architecture & Endpoints",
+        "🧪 Live Webhook Ping Tester"
+    ])
+
+    with doc_tab1:
+        st.markdown("""
+        <div class="guide-card guide-card-cyan">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                    <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">🔗 Connect Your Repository via GitHub Webhooks</h3>
+                    <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
+                        When your GitHub Actions CI fails, GitHub automatically notifies this agent. Gemma 4 writes an AST-verified patch and opens a ready-to-merge Pull Request.
+                    </p>
+                </div>
+                <span style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.4); color: #22D3EE; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                    ● NO CODE CHANGES NEEDED
+                </span>
+            </div>
+        """, unsafe_allow_html=True)
+
+        g_col1, g_col2 = st.columns([1.1, 1], gap="medium")
+        with g_col1:
+            user_repo = st.text_input("1️⃣ Enter Your GitHub Repository (Owner/Repo)", value="Shubhamjkd01/Nursesycn", placeholder="e.g. your-org/your-repo", key="user_repo_input")
+            server_choice = st.selectbox(
+                "2️⃣ Select Your Agent Backend Host",
+                [
+                    "Hosted Cloud Server (DigitalOcean / Production)",
+                    "Local Machine via Ngrok Tunnel (https://xxxx.ngrok-free.app)",
+                    "Local Machine Direct (http://localhost:7860)"
+                ],
+                key="server_choice_select"
+            )
+
+            if "DigitalOcean" in server_choice:
+                webhook_target = "https://aidevops-backend.ondigitalocean.app/api/v1/webhook/github"
+            elif "Ngrok" in server_choice:
+                ngrok_subdomain = st.text_input("Enter your Ngrok Domain / URL", value="https://ai-devops.ngrok-free.app", key="ngrok_subdomain_input")
+                webhook_target = f"{ngrok_subdomain.rstrip('/')}/api/v1/webhook/github"
+            else:
+                webhook_target = "http://localhost:7860/api/v1/webhook/github"
+
+        with g_col2:
+            st.markdown(f"""
+            <div class="config-preview-box">
+                <div style="color: #64748B; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">
+                    📋 Ready-to-Copy GitHub Webhook Settings:
+                </div>
+                <div style="margin-bottom: 0.4rem;">
+                    <span class="config-label">Payload URL:</span>
+                    <span style="color: #F8FAFC; word-break: break-all;">{webhook_target}</span>
+                </div>
+                <div style="margin-bottom: 0.4rem;">
+                    <span class="config-label">Content type:</span>
+                    <span style="color: #38BDF8; font-weight: 700;">application/json</span>
+                </div>
+                <div style="margin-bottom: 0.4rem;">
+                    <span class="config-label">Secret:</span>
+                    <span style="color: #F8FAFC;">(Optional / matching your .env)</span>
+                </div>
+                <div>
+                    <span class="config-label">SSL verification:</span>
+                    <span style="color: #34D399; font-weight: 700;">Enable SSL</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            st.markdown(f"""
+            <div style="margin-top: 0.8rem;">
+                <a href="https://github.com/{user_repo}/settings/hooks/new" target="_blank" style="
+                    display: block;
+                    text-align: center;
+                    background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+                    color: #FFFFFF !important;
+                    padding: 0.65rem 1.2rem;
+                    border-radius: 9999px;
+                    font-weight: 700;
+                    font-size: 0.85rem;
+                    text-decoration: none;
+                    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+                ">
+                    ⚡ Open GitHub Webhook Settings for {user_repo} ↗
+                </a>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 1.8rem 0 1.2rem 0;"></div>
+        <h4 style="color: #FFFFFF; font-size: 1.05rem; margin-bottom: 1.2rem;">📌 4-Step GitHub Setup Guide</h4>
+
+        <div class="step-item">
+            <div class="step-badge step-badge-cyan">1</div>
+            <div class="step-content">
+                <div class="step-heading">Open Repository Webhook Settings</div>
+                <div class="step-subtext">
+                    Go to your GitHub repository &rarr; click <strong>Settings</strong> tab &rarr; in the left sidebar click <strong>Webhooks</strong> &rarr; click the <strong>Add webhook</strong> button.
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item">
+            <div class="step-badge step-badge-cyan">2</div>
+            <div class="step-content">
+                <div class="step-heading">Configure Payload URL & Content Type</div>
+                <div class="step-subtext">
+                    Paste the <strong>Payload URL</strong> generated in the box above.<br>
+                    Change <strong>Content type</strong> from <code>application/x-www-form-urlencoded</code> to <strong><code>application/json</code></strong>.
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item">
+            <div class="step-badge step-badge-cyan">3</div>
+            <div class="step-content">
+                <div class="step-heading">Select Individual Trigger Events</div>
+                <div class="step-subtext">
+                    Under <em>"Which events would you like to trigger this webhook?"</em>, choose <strong>Let me select individual events</strong>.<br>
+                    Check the following 3 events:
+                    <ul style="margin: 0.4rem 0 0 1.2rem; padding: 0;">
+                        <li><strong style="color: #38BDF8;">Workflow runs</strong> &mdash; Triggers Gemma 4 when your CI/CD job fails.</li>
+                        <li><strong style="color: #38BDF8;">Check suites</strong> &mdash; Monitors GitHub Actions test suites.</li>
+                        <li><strong style="color: #38BDF8;">Pull requests</strong> &mdash; Tracks PR merges/closures for reinforcement learning feedback.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-item">
+            <div class="step-badge step-badge-cyan">4</div>
+            <div class="step-content">
+                <div class="step-heading">Save and Verify</div>
+                <div class="step-subtext">
+                    Make sure <strong>Active</strong> is checked, then click <strong>Add webhook</strong>.<br>
+                    GitHub will send an initial <code>ping</code> event with a green checkmark indicating successful connection!
+                </div>
+            </div>
+        </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with doc_tab2:
+        st.markdown("""
+        <div class="guide-card guide-card-purple" id="local-install">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                    <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">💻 Install & Run Locally on Your Machine</h3>
+                    <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
+                        Run the autonomous FastAPI agent backend and Streamlit dashboard locally on your system using Python or Docker.
+                    </p>
+                </div>
+                <span style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #C084FC; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                    ● 100% OPEN-WEIGHT GEMMA 4
+                </span>
+            </div>
+        """, unsafe_allow_html=True)
+
+        os_tab1, os_tab2, os_tab3 = st.tabs(["🪟 Windows (PowerShell)", "🍎 macOS & 🐧 Linux", "🐳 Docker Compose (1-Click)"])
+
+        with os_tab1:
+            st.markdown("""
+            **Step 1: Clone the repository:**
+            ```powershell
+            git clone https://github.com/Shubhamjkd01/AI_DevOps_X.git
+            cd AI_DevOps_X
+            ```
+
+            **Step 2: Create a virtual environment & install dependencies:**
+            ```powershell
+            python -m venv venv
+            .\\venv\\Scripts\\activate
+            pip install -r requirements.txt
+            ```
+
+            **Step 3: Create your `.env` configuration file:**
+            Create a file named `.env` in the repository root directory:
+            ```env
+            # 1. Google Gemma 4 Configuration (Get free key at https://aistudio.google.com/)
+            GEMINI_API_KEY=AIzaSy...your_gemini_api_key_here
+            GEMMA_MODEL_NAME=models/gemma-4-26b-a4b-it
+
+            # 2. GitHub Personal Access Token (PAT with 'repo' & 'workflow' permissions)
+            # Generate at https://github.com/settings/tokens
+            GITHUB_TOKEN=ghp_your_github_token_here
+            GITHUB_WEBHOOK_SECRET=mysecretkey123
+            ```
+
+            **Step 4: Start the Backend API Server:**
+            ```powershell
+            python -m uvicorn server.app:app --host 0.0.0.0 --port 7860 --reload
+            ```
+
+            **Step 5: Start the Streamlit Dashboard (in a second terminal):**
+            ```powershell
+            python -m streamlit run dashboard.py --server.port 8501
+            ```
+
+            **Step 6: (Optional) Connect to real GitHub Actions using Ngrok:**
+            ```powershell
+            ngrok http 7860
+            ```
+            *Copy your public HTTPS URL (e.g. `https://xxxx.ngrok-free.app/api/v1/webhook/github`) into your GitHub repository's Webhook settings!*
+            """)
+
+        with os_tab2:
+            st.markdown("""
+            **Step 1: Clone and navigate to repo:**
+            ```bash
+            git clone https://github.com/Shubhamjkd01/AI_DevOps_X.git
+            cd AI_DevOps_X
+            ```
+
+            **Step 2: Set up virtualenv and install packages:**
+            ```bash
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install -r requirements.txt
+            ```
+
+            **Step 3: Create `.env`:**
+            ```bash
+            cat << 'EOF' > .env
+            GEMINI_API_KEY=AIzaSy...your_gemini_api_key_here
+            GEMMA_MODEL_NAME=models/gemma-4-26b-a4b-it
+            GITHUB_TOKEN=ghp_your_github_token_here
+            GITHUB_WEBHOOK_SECRET=mysecretkey123
+            EOF
+            ```
+
+            **Step 4: Run Backend & Dashboard:**
+            ```bash
+            # Terminal 1 (Backend Engine):
+            uvicorn server.app:app --host 0.0.0.0 --port 7860 --reload
+
+            # Terminal 2 (Streamlit UI):
+            streamlit run dashboard.py --server.port 8501
+            ```
+            """)
+
+        with os_tab3:
+            st.markdown("""
+            **Run the entire stack in one command with Docker:**
+            ```bash
+            docker compose up --build -d
+            ```
+            - Backend API ready at: `http://localhost:7860`
+            - Streamlit Dashboard ready at: `http://localhost:8501`
+            """)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with doc_tab3:
+        st.markdown("""
+        <div class="guide-card" style="border-top: 3px solid #EC4899;" id="dev-tips">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                    <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">💡 Open-Source Setup Tips & Best Practices for Developers</h3>
+                    <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
+                        Key tips, free quota optimization, multi-repo routing, and contribution workflows.
+                    </p>
+                </div>
+                <a href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank" class="dev-btn dev-btn-primary" style="font-size: 0.78rem; padding: 0.35rem 0.9rem;">
+                    ⭐ Fork & Star on GitHub
+                </a>
+            </div>
+        """, unsafe_allow_html=True)
+
+        t_col1, t_col2 = st.columns(2, gap="medium")
+        with t_col1:
+            st.markdown("""
+            #### 1️⃣ Connect Multiple Repositories to a Single Agent
+            You do not need to deploy separate server instances for each repository. One deployed instance of AI_DevOps_X can handle **unlimited repositories**:
+            - In each repository's settings (`Settings -> Webhooks -> Add Webhook`), paste the same **Payload URL** (`https://<your-deploy-url>/webhook`).
+            - The agent extracts the repository name dynamically from `payload["repository"]["full_name"]` and opens branches and PRs in the correct repository automatically!
+
+            #### 2️⃣ Free-Tier Google Gemma 4 API (Zero Billing)
+            You do **not** need a paid cloud account to run Gemma 4:
+            - Head over to **[Google AI Studio](https://aistudio.google.com/)** and click **Get API Key**.
+            - Google offers a generous **free tier** (15 RPM / 1M TPM) for Gemma 4 models.
+            - Add `GEMINI_API_KEY=AIzaSy...` in your `.env` or deployment environment variables, and you're ready to go!
+
+            #### 3️⃣ Test Locally Before Pushing with Ngrok
+            Want to test incoming GitHub Actions webhooks on your local computer before deploying?
+            ```bash
+            # Start local backend on port 7860
+            uvicorn server.app:app --port 7860
+            # Expose port 7860 with ngrok
+            ngrok http 7860
+            ```
+            Copy the `https://xxxx.ngrok-free.app/webhook` URL into your GitHub Webhook settings. When your CI fails, GitHub will trigger your local machine directly!
+            """)
+
+        with t_col2:
+            st.markdown("""
+            #### 4️⃣ Environment Configuration Matrix
+            Create your `.env` file with these keys:
+            ```env
+            # Primary Open-Weight LLM
+            GEMINI_API_KEY=your_gemini_api_key_here
+            GEMMA_MODEL_NAME=models/gemma-4-26b-a4b-it
+
+            # GitHub Automation Credentials
+            GITHUB_TOKEN=ghp_your_github_token_here
+            GITHUB_WEBHOOK_SECRET=your_secret_passphrase
+
+            # Optional Flags
+            DRY_RUN_MODE=false        # Set true to test without opening PRs
+            AGENT_PORT=7860
+            ```
+
+            #### 5️⃣ Contributing to AI_DevOps_X
+            This is a 100% open-source project and community contributions are warmly welcomed:
+            - **Bug Reports & Issues:** Submit detailed logs or edge cases in [GitHub Issues](https://github.com/Shubhamjkd01/AI_DevOps_X/issues).
+            - **New Agents & Graders:** Add language support (Go, Rust, TypeScript) under `/agents/` or `/tasks/`.
+            - **Pull Requests:** Fork `Shubhamjkd01/AI_DevOps_X`, create a feature branch, and submit a PR!
+            """)
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with doc_tab4:
+        st.markdown("""
+        <div class="guide-card" style="border-top: 3px solid #8B5CF6;">
+            <h4 style="color: #FFFFFF; font-size: 1.15rem; margin-top: 0;">⚡ 5-Tier Agentic Pipeline Workflow</h4>
+            <div class="step-item">
+                <div class="step-badge" style="background: #3B82F6;">1</div>
+                <div class="step-content">
+                    <div class="step-heading">Ingestion & Triage</div>
+                    <div class="step-subtext">GitHub webhook delivers failure event &rarr; HMAC SHA-256 signature is verified &rarr; logs are downloaded and parsed into structured AST failure frames.</div>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-badge" style="background: #8B5CF6;">2</div>
+                <div class="step-content">
+                    <div class="step-heading">FAISS Tensor Memory Retrieval</div>
+                    <div class="step-subtext">Queries 768-dimensional L2 tensor embeddings of previously accepted fixes. If a similar failure was resolved before, historical context is injected into Gemma 4's prompt.</div>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-badge" style="background: #EC4899;">3</div>
+                <div class="step-content">
+                    <div class="step-heading">Gemma 4 AST Patch Synthesis</div>
+                    <div class="step-subtext">Google Gemma 4 (<code>models/gemma-4-26b-a4b-it</code>) reasons over repository AST context to generate a surgical, minimal patch targeting the root cause.</div>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-badge" style="background: #10B981;">4</div>
+                <div class="step-content">
+                    <div class="step-heading">AST Safety Guard & Docker Sandbox</div>
+                    <div class="step-subtext">Python <code>ast.parse()</code> verifies syntactic validity and blocks dangerous functions (<code>os.system</code>, <code>eval</code>). Ephemeral Docker sandbox runs pytest to verify zero regressions.</div>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-badge" style="background: #06B6D4;">5</div>
+                <div class="step-content">
+                    <div class="step-heading">3-Tier Judge & Automated PR</div>
+                    <div class="step-subtext">Junior/Senior/Principal LLM Judge evaluates patch quality. If score &ge; 0.5, PR Agent creates branch <code>fix/workflow-{run_id}</code> and opens a ready-to-merge Pull Request.</div>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 1.5rem 0 1rem 0;"></div>
+            <h4 style="color: #FFFFFF; font-size: 1.05rem;">🌐 Core REST Endpoints</h4>
+            <div style="font-size: 0.85rem; color: #CBD5E1; line-height: 1.6;">
+                <p><strong><code>POST /webhook</code> or <code>/api/v1/webhook/github</code></strong> &mdash; Receives GitHub Action crash webhooks. Triggers background triage and PR synthesis.</p>
+                <p><strong><code>GET /health</code></strong> &mdash; Returns system health, active Gemma 4 model verification, and readiness status.</p>
+                <p><strong><code>GET /tasks</code></strong> &mdash; Returns active OpenEnv benchmark tasks and grading callables.</p>
+                <p><strong><code>POST /grade</code></strong> &mdash; Executes task graders dynamically against candidate patch diffs.</p>
+                <p><strong><code>POST /reset</code> & <code>POST /step</code></strong> &mdash; Core OpenEnv reinforcement learning simulation environment endpoints.</p>
+            </div>
+            <div style="margin-top: 1rem;">
+                <a href="http://localhost:7860/docs" target="_blank" class="dev-btn dev-btn-secondary" style="font-size: 0.8rem;">
+                    📚 Open Swagger API Docs (/docs) ↗
+                </a>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with doc_tab5:
+        st.markdown("""
+        <div class="guide-card guide-card-emerald">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                    <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">🧪 Test Your Webhook Connection</h3>
+                    <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
+                        Send an instantaneous test webhook to verify your backend server is receiving and processing GitHub events.
+                    </p>
+                </div>
+                <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34D399; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                    ● LIVE ENDPOINT TESTER
+                </span>
+            </div>
+        """, unsafe_allow_html=True)
+
+        test_c1, test_c2 = st.columns(2)
+        with test_c1:
+            test_repo_name = st.text_input("Repository for Test", value="Shubhamjkd01/AI_DevOps_X", key="test_repo_ping")
+            test_event_type = st.selectbox("Simulated GitHub Event", ["workflow_run (CI Failure)", "pull_request (PR Feedback)"], key="test_event_type")
+        with test_c2:
+            test_backend_url = st.text_input("Target Backend Webhook URL", value=WEBHOOK_URL, key="test_webhook_url_input")
+            send_ping_btn = st.button("⚡ SEND TEST WEBHOOK PING", key="btn_send_ping", use_container_width=True)
+
+        if send_ping_btn:
+            with st.spinner("Sending test payload to backend..."):
+                try:
+                    if "workflow_run" in test_event_type:
+                        payload = {
+                            "action": "completed",
+                            "workflow_run": {
+                                "id": 99999,
+                                "status": "completed",
+                                "conclusion": "failure",
+                                "head_commit": {"id": "test_sha_123", "author": {"email": "dev@test.org", "name": "Developer"}}
+                            },
+                            "repository": {"full_name": test_repo_name},
+                            "mock_fail_type": "syntax",
+                            "llm_priority": "Google Gemma 4"
+                        }
+                        headers = {"X-GitHub-Event": "workflow_run"}
+                    else:
+                        payload = {
+                            "action": "closed",
+                            "pull_request": {"merged": True, "html_url": f"https://github.com/{test_repo_name}/pull/1"},
+                            "repository": {"full_name": test_repo_name}
+                        }
+                        headers = {"X-GitHub-Event": "pull_request"}
+
+                    resp = requests.post(test_backend_url, json=payload, headers=headers, timeout=5)
+                    st.success(f"**HTTP Status:** `{resp.status_code} {resp.reason}`")
+                    st.json(resp.json())
+                except Exception as e:
+                    st.error(f"Webhook Ping Failed: {e}")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='margin-bottom: 4.5rem;'></div>", unsafe_allow_html=True)
+
+
+
+elif nav_page == "🛡️ Data & Code Security Guarantee":
+
+    st.markdown("""
+    <div class="section-header" id="security">
+        <div class="section-tag">DATA PRIVACY & INTEGRITY GUARANTEE</div>
+        <div class="section-title">How Your Code & Data Remains 100% Safe</div>
+        <div class="section-desc">Zero code retention. Zero unauthorized repository access. Enterprise zero-trust guarantees.</div>
+    </div>
+
     <div class="guide-card guide-card-emerald">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
             <div>
-                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">🛡️ Enterprise Security, Privacy & Zero-Trust Architecture</h3>
+                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.3rem;">🛡️ Enterprise Zero-Trust & Code Privacy Architecture</h3>
                 <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
-                    How organizations maintain 100% control, zero unauthorized access, and complete code confidentiality.
+                    Why your repository code, proprietary algorithms, and secrets are completely protected.
                 </p>
             </div>
             <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34D399; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
-                ● ZERO-TRUST COMPLIANT
+                ● 100% PRIVATE & COMPLIANT
             </span>
         </div>
     """, unsafe_allow_html=True)
-    
+
     sec1, sec2 = st.columns(2, gap="medium")
     with sec1:
         st.markdown("""
-        #### 🔒 1. One-Way Webhook Architecture (Zero Inbound Access)
-        - **Webhooks grant NO repository access:** A GitHub Webhook is strictly a one-way notification sent from GitHub's servers to the agent.
-        - **Cannot read or touch code:** A webhook payload contains event metadata (run ID, branch name, failure status). It cannot read source code files, clone private repositories, or modify Git history.
-        - **HMAC SHA-256 Signatures:** Webhooks are cryptographically signed using GitHub's `X-Hub-Signature-256` header. Unauthorized or spoofed requests are rejected immediately with HTTP 401.
-        
-        #### 🔑 2. Granular Least-Privilege Scoping (Fine-Grained PAT / GitHub App)
-        - **No Admin or Secret Access:** When granting permissions to create PRs, organizations use a Fine-Grained Personal Access Token or GitHub App strictly scoped to:
-          - `Actions: Read` (only for inspecting CI failure logs)
-          - `Pull Requests: Read & Write` (only to submit automated fix branches)
-        - **Forbidden Scopes:** `Organization Administration`, `Billing`, `Repository Secrets`, and `Deployments` have zero access.
-        - **1-Click Revocation:** Permissions can be revoked instantly at any second in your GitHub Organization settings.
+        #### 🔒 1. One-Way Webhooks (Zero Inbound Access)
+        - **Webhooks grant NO code access:** A GitHub Webhook is strictly a one-way outgoing alert from GitHub to the agent.
+        - **No code reading:** Webhook payloads only contain run metadata (`run_id`, failed status, branch name). They contain zero source code files and cannot clone private repositories.
+        - **HMAC SHA-256 Signatures:** Every incoming request is cryptographically verified via GitHub's `X-Hub-Signature-256` header. Tampered or forged requests are rejected with HTTP 401.
+
+        #### 🚫 2. Zero Code Retention / Never Trained On
+        - **No persistent storage:** Your source code is never stored in any database, cache, or external disk.
+        - **No AI training:** Google Gemma 4 processes the stack trace context in ephemeral memory solely to synthesize the AST patch diff. Your code is never used to train or fine-tune models.
         """)
-        
+
     with sec2:
         st.markdown("""
-        #### 🏢 3. 100% Air-Gapped / Self-Hosted in Your Own VPC
-        - **Zero Cloud Dependence:** Organizations can run this entire stack inside their own private AWS VPC, GCP project, Azure cloud, or on-premise Kubernetes cluster.
-        - **No External Data Exfiltration:** Your code, error logs, and repository tokens never leave your enterprise firewall.
-        - **Private Model Deployment:** Run Google Gemma 4 on your own internal GPU runners or via your private Google Cloud Vertex AI tenant.
-        
-        #### 🛡️ 4. AST Hallucination Guard & Human-in-the-Loop
-        - **Abstract Syntax Tree (AST) Validation:** Every patch generated by Gemma 4 is analyzed before execution to prevent malicious syntax, `eval()`, `os.system()`, or network socket calls.
-        - **Zero Direct Pushes to Main:** The agent is programmatically restricted from ever pushing directly to `main` or production branches. It only creates a separate Pull Request (`fix/ci-failure-*`).
-        - **Human Approval Mandatory:** An enterprise engineer must review the diff and approve the PR before any code is merged to production.
+        #### 🏢 3. 100% Self-Hostable in Your Own VPC
+        - **Total air-gapped isolation:** Organizations can deploy this entire stack inside their own private AWS VPC, GCP project, Azure cloud, or on-premise Kubernetes cluster.
+        - **Zero external data transit:** No logs, tokens, or repo context ever leave your enterprise network.
+        - **Private Model Deployment:** Run Google Gemma 4 on private internal GPU instances or through your organization's private Google Cloud Vertex AI tenant.
+
+        #### 🛡️ 4. AST Hallucination Guard & Human Approval
+        - **AST Syntax Inspection:** Every patch is checked before submission by Python's `ast.parse()` to disallow dangerous system calls (`os.system`, `subprocess`, `eval()`).
+        - **No Direct Push to Production:** The agent is programmatically restricted from ever pushing directly to `main`. It only opens a standard Pull Request for your engineers to review, approve, and merge.
         """)
-        
-    st.markdown("</div>", unsafe_allow_html=True)
 
-with doc_tab6:
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div style='margin-bottom: 4.5rem;'></div>", unsafe_allow_html=True)
+
+
+
     st.markdown("""
-    <div class="guide-card guide-card-emerald">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
-            <div>
-                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">🧪 Test Your Webhook Connection</h3>
-                <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
-                    Send an instantaneous test webhook to verify your backend server is receiving and processing GitHub events.
-                </p>
-            </div>
-            <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34D399; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
-                ● LIVE ENDPOINT TESTER
-            </span>
-        </div>
+    <div class="guide-card guide-card-cyan" style="margin-top: 2rem;">
+        <h3 style="margin: 0 0 1.2rem 0; color: #FFFFFF; font-size: 1.25rem;">⚖️ Security Architecture: Traditional SaaS vs. AIDEVOPS Zero-Trust</h3>
+        <table class="preview-table">
+            <thead>
+                <tr>
+                    <th>SECURITY DIMENSION</th>
+                    <th>TRADITIONAL 3RD-PARTY SAAS</th>
+                    <th style="color: #34D399;">AIDEVOPS ZERO-TRUST ENGINE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Repository Code Access</strong></td>
+                    <td style="color: #F87171;">Full OAuth / Admin Read & Write to all repos</td>
+                    <td style="color: #34D399; font-weight: 700;">Strictly Least-Privilege (Actions + PRs only)</td>
+                </tr>
+                <tr>
+                    <td><strong>Source Code Storage</strong></td>
+                    <td style="color: #F87171;">Stored on external cloud databases</td>
+                    <td style="color: #34D399; font-weight: 700;">Zero code stored. Ephemeral in-memory only</td>
+                </tr>
+                <tr>
+                    <td><strong>AI Model Training</strong></td>
+                    <td style="color: #F87171;">Customer code often used to train vendor models</td>
+                    <td style="color: #34D399; font-weight: 700;">Never trained on. Zero data retention policy</td>
+                </tr>
+                <tr>
+                    <td><strong>Deployment Isolation</strong></td>
+                    <td style="color: #F87171;">Shared multi-tenant cloud server</td>
+                    <td style="color: #34D399; font-weight: 700;">100% Self-Hostable in your own VPC / Laptop</td>
+                </tr>
+                <tr>
+                    <td><strong>Push Permissions</strong></td>
+                    <td style="color: #F87171;">May push directly to main / production branches</td>
+                    <td style="color: #34D399; font-weight: 700;">PR only. Human review & sign-off mandatory</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     """, unsafe_allow_html=True)
-    
-    test_c1, test_c2 = st.columns(2)
-    with test_c1:
-        test_repo_name = st.text_input("Repository for Test", value="Shubhamjkd01/AI_DevOps_X", key="test_repo_ping")
-        test_event_type = st.selectbox("Simulated GitHub Event", ["workflow_run (CI Failure)", "pull_request (PR Feedback)"], key="test_event_type")
-    with test_c2:
-        test_backend_url = st.text_input("Target Backend Webhook URL", value=WEBHOOK_URL, key="test_webhook_url_input")
-        send_ping_btn = st.button("⚡ SEND TEST WEBHOOK PING", key="btn_send_ping", use_container_width=True)
-        
-    if send_ping_btn:
-        with st.spinner("Sending test payload to backend..."):
-            try:
-                if "workflow_run" in test_event_type:
-                    payload = {
-                        "action": "completed",
-                        "workflow_run": {
-                            "id": 99999,
-                            "status": "completed",
-                            "conclusion": "failure",
-                            "head_commit": {"id": "test_sha_123", "author": {"email": "dev@test.org", "name": "Developer"}}
-                        },
-                        "repository": {"full_name": test_repo_name},
-                        "mock_fail_type": "syntax",
-                        "llm_priority": "Google Gemma 4"
-                    }
-                    headers = {"X-GitHub-Event": "workflow_run"}
-                else:
-                    payload = {
-                        "action": "closed",
-                        "pull_request": {"merged": True, "html_url": f"https://github.com/{test_repo_name}/pull/1"},
-                        "repository": {"full_name": test_repo_name}
-                    }
-                    headers = {"X-GitHub-Event": "pull_request"}
-                    
-                resp = requests.post(test_backend_url, json=payload, headers=headers, timeout=5)
-                st.success(f"**HTTP Status:** `{resp.status_code} {resp.reason}`")
-                st.json(resp.json())
-            except Exception as e:
-                st.error(f"Webhook Ping Failed: {e}")
-                
-    st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<div style='margin-bottom: 4.5rem;'></div>", unsafe_allow_html=True)
 
-# ==========================================
-# 3. ABOUT THE DEVELOPER (SHUBHAM)
-# ==========================================
-st.markdown(f"""
-<div class="section-header" id="about-author">
-    <div class="section-tag">OPEN SOURCE CREATOR</div>
-    <div class="section-title">About the Developer</div>
-    <div class="section-desc">Pioneering autonomous developer infrastructure and self-healing CI/CD with open-weight intelligence.</div>
-</div>
+elif nav_page == "👨‍💻 About Developer":
 
-<div class="dev-card">
-    <div style="display: flex; gap: 2.2rem; align-items: center; flex-wrap: wrap;">
-        <div class="dev-photo-wrap">
-            <img src="data:image/png;base64,{dev_img_b64}" class="dev-photo" alt="Shubham - Developer" />
-            <div class="dev-online-dot"></div>
-        </div>
-        <div style="flex: 1; min-width: 280px;">
-            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.65rem; font-weight: 800;">Shubham</h3>
-                <span style="background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: #C084FC; padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
-                    @Shubhamjkd01
-                </span>
-                <span style="background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(6, 182, 212, 0.4); color: #22D3EE; padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
-                    AI & DevOps Systems Architect
-                </span>
+    st.markdown(f"""
+    <div class="section-header" id="about-author">
+        <div class="section-tag">OPEN SOURCE CREATOR</div>
+        <div class="section-title">About the Developer</div>
+        <div class="section-desc">Pioneering autonomous developer infrastructure and self-healing CI/CD with open-weight intelligence.</div>
+    </div>
+
+    <div class="dev-card">
+        <div style="display: flex; gap: 2.2rem; align-items: center; flex-wrap: wrap;">
+            <div class="dev-photo-wrap">
+                <img src="data:image/png;base64,{dev_img_b64}" class="dev-photo" alt="Shubham - Developer" />
+                <div class="dev-online-dot"></div>
             </div>
-            <p style="margin: 0.8rem 0 1.2rem 0; color: #94A3B8; font-size: 0.95rem; line-height: 1.65;">
-                Hi, I'm Shubham! I designed and built <strong>AI DevOps</strong> to transform broken CI/CD pipelines into autonomous, self-healing workflows. Powered by Google's open-weight <strong>Gemma 4</strong> models, rigorous AST syntax validation, and episodic vector memory, it resolves build failures in seconds without human debugging fatigue.
-            </p>
-            <div style="margin-bottom: 1.2rem;">
-                <span class="dev-tag-chip">🐍 Python 3.11</span>
-                <span class="dev-tag-chip">🤖 Google Gemma 4</span>
-                <span class="dev-tag-chip">⚡ FastAPI</span>
-                <span class="dev-tag-chip">🎨 Streamlit</span>
-                <span class="dev-tag-chip">🐙 GitHub Actions</span>
-                <span class="dev-tag-chip">🐳 Docker</span>
-                <span class="dev-tag-chip">🧠 FAISS Vector Memory</span>
-                <span class="dev-tag-chip">🌊 DigitalOcean</span>
-            </div>
-            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                <a href="https://github.com/Shubhamjkd01" target="_blank" class="dev-btn dev-btn-primary">
-                    🐙 GitHub Profile: @Shubhamjkd01
-                </a>
-                <a href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank" class="dev-btn dev-btn-secondary">
-                    ⭐ Project Repo: AI_DevOps_X
-                </a>
-                <a href="https://github.com/Shubhamjkd01/AI_DevOps_X/issues" target="_blank" class="dev-btn dev-btn-secondary">
-                    💬 Report Issue / Feedback
-                </a>
+            <div style="flex: 1; min-width: 280px;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                    <h3 style="margin: 0; color: #FFFFFF; font-size: 1.65rem; font-weight: 800;">Shubham</h3>
+                    <span style="background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: #C084FC; padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                        @Shubhamjkd01
+                    </span>
+                    <span style="background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(6, 182, 212, 0.4); color: #22D3EE; padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                        AI & DevOps Systems Architect
+                    </span>
+                </div>
+                <p style="margin: 0.8rem 0 1.2rem 0; color: #94A3B8; font-size: 0.95rem; line-height: 1.65;">
+                    Hi, I'm Shubham! I designed and built <strong>AI DevOps</strong> to transform broken CI/CD pipelines into autonomous, self-healing workflows. Powered by Google's open-weight <strong>Gemma 4</strong> models, rigorous AST syntax validation, and episodic vector memory, it resolves build failures in seconds without human debugging fatigue.
+                </p>
+                <div style="margin-bottom: 1.2rem;">
+                    <span class="dev-tag-chip">🐍 Python 3.11</span>
+                    <span class="dev-tag-chip">🤖 Google Gemma 4</span>
+                    <span class="dev-tag-chip">⚡ FastAPI</span>
+                    <span class="dev-tag-chip">🎨 Streamlit</span>
+                    <span class="dev-tag-chip">🐙 GitHub Actions</span>
+                    <span class="dev-tag-chip">🐳 Docker</span>
+                    <span class="dev-tag-chip">🧠 FAISS Vector Memory</span>
+                    <span class="dev-tag-chip">🌊 DigitalOcean</span>
+                </div>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <a href="https://github.com/Shubhamjkd01" target="_blank" class="dev-btn dev-btn-primary">
+                        🐙 GitHub Profile: @Shubhamjkd01
+                    </a>
+                    <a href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank" class="dev-btn dev-btn-secondary">
+                        ⭐ Project Repo: AI_DevOps_X
+                    </a>
+                    <a href="https://github.com/Shubhamjkd01/AI_DevOps_X/issues" target="_blank" class="dev-btn dev-btn-secondary">
+                        💬 Report Issue / Feedback
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div style="text-align: center; margin-top: 3.5rem; color: #64748B; font-size: 0.8rem;">
-    Built with ❤️ by <a href="https://github.com/Shubhamjkd01" target="_blank" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Shubham</a> &bull; Powered by Google Gemma 4 &bull; 100% Free & Open-Source Software
-</div>
-""", unsafe_allow_html=True)
+    <div style="text-align: center; margin-top: 3.5rem; color: #64748B; font-size: 0.8rem;">
+        Built with ❤️ by <a href="https://github.com/Shubhamjkd01" target="_blank" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Shubham</a> &bull; Powered by Google Gemma 4 &bull; 100% Free & Open-Source Software
+    </div>
+    """, unsafe_allow_html=True)
