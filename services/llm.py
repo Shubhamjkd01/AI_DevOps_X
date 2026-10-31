@@ -1,6 +1,8 @@
 import os
 import logging
 import hashlib
+from dotenv import load_dotenv
+load_dotenv(override=True)
 from openai import OpenAI
 
 logger = logging.getLogger(__name__)
@@ -153,11 +155,14 @@ def _try_gemma(prompt: str) -> str:
     genai.configure(api_key=gemini_key)
 
     gemma_candidates = [
-        os.getenv("GEMMA_MODEL_NAME", "gemma-2-9b-it"),
-        "gemma-2-27b-it",
-        "gemma-2-9b-it",
-        "models/gemma-2-27b-it",
+        os.getenv("GEMMA_MODEL_NAME", "models/gemma-4-26b-a4b-it"),
+        "models/gemma-4-26b-a4b-it",
+        "models/gemma-4-31b-it",
+        "gemma-4-26b-a4b-it",
+        "gemma-4-31b-it",
         "models/gemma-2-9b-it",
+        "models/gemma-2-27b-it",
+        "gemma-2-9b-it",
         "gemini-1.5-flash"
     ]
     last_err = None
