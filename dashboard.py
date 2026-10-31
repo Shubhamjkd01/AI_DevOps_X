@@ -421,6 +421,107 @@ div.stButton > button:first-child:hover {
     transform: translateY(-2px) !important;
     box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6) !important;
 }
+
+/* Tab Bar Styling */
+div[data-baseweb="tab-list"] {
+    background: rgba(15, 23, 42, 0.7) !important;
+    border-radius: 9999px !important;
+    padding: 0.35rem 0.6rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    gap: 0.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+div[data-baseweb="tab"] {
+    border-radius: 9999px !important;
+    padding: 0.55rem 1.4rem !important;
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    color: #94A3B8 !important;
+    border: none !important;
+    background: transparent !important;
+    transition: all 0.2s ease !important;
+}
+div[data-baseweb="tab"][aria-selected="true"] {
+    background: linear-gradient(135deg, #EC4899 0%, #A855F7 100%) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 18px rgba(236, 72, 153, 0.45) !important;
+}
+div[data-baseweb="tab-highlight"], div[data-baseweb="tab-border"] {
+    display: none !important;
+}
+
+/* Guide & Step Cards */
+.guide-card {
+    background: rgba(13, 17, 28, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.guide-card-cyan {
+    border-top: 3px solid #06B6D4;
+}
+.guide-card-purple {
+    border-top: 3px solid #A855F7;
+}
+.guide-card-emerald {
+    border-top: 3px solid #10B981;
+}
+.step-item {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    margin-bottom: 1.3rem;
+}
+.step-badge {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EC4899 0%, #A855F7 100%);
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 12px rgba(236, 72, 153, 0.5);
+}
+.step-badge-cyan {
+    background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.5);
+}
+.step-content {
+    flex: 1;
+}
+.step-heading {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 0.25rem;
+}
+.step-subtext {
+    font-size: 0.86rem;
+    color: #94A3B8;
+    line-height: 1.5;
+}
+.config-preview-box {
+    background: rgba(10, 15, 26, 0.95);
+    border: 1px solid rgba(6, 182, 212, 0.35);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: #E2E8F0;
+    margin-top: 0.8rem;
+}
+.config-label {
+    color: #38BDF8;
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
 </style>
 
 <!-- TOP NAVBAR -->
@@ -433,13 +534,13 @@ div.stButton > button:first-child:hover {
         </div>
     </div>
     <div class="nav-links">
+        <a href="#connect-guide">CONNECT GITHUB</a>
+        <a href="#local-install">RUN LOCALLY</a>
         <a href="#architecture">ARCHITECTURE</a>
-        <a href="#gemma-engine">GEMMA 4 ENGINE</a>
-        <a href="#digitalocean">DIGITALOCEAN</a>
         <a href="#triage">LIVE TRIAGE</a>
     </div>
     <div>
-        <a class="nav-btn" href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank">
+        <a class="nav-btn" href="#connect-guide">
             ⚡ CONNECT GITHUB
         </a>
     </div>
@@ -595,6 +696,326 @@ with m_col3:
     """, unsafe_allow_html=True)
 
 st.markdown("<div style='margin-bottom: 3rem;'></div>", unsafe_allow_html=True)
+
+# ==========================================
+# GITHUB CONNECTION & LOCAL INSTALLATION GUIDE
+# ==========================================
+st.markdown("""
+<div class="section-header" id="connect-guide">
+    <div class="section-tag">GETTING STARTED</div>
+    <div class="section-title">Connect Any Repository or Run Locally</div>
+    <div class="section-desc">Zero complex configuration. Connect your GitHub repository in 2 minutes via Webhooks, or run the complete agent stack locally on your computer.</div>
+</div>
+""", unsafe_allow_html=True)
+
+guide_tab1, guide_tab2, guide_tab3 = st.tabs([
+    "🔗 Option A: Connect GitHub via Webhook (Cloud / 2-Min Setup)",
+    "💻 Option B: Run Locally on Your System (CLI / Docker)",
+    "🧪 Live Webhook Ping Tester"
+])
+
+with guide_tab1:
+    st.markdown("""
+    <div class="guide-card guide-card-cyan">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">🔗 Connect Your Repository via GitHub Webhooks</h3>
+                <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
+                    When your GitHub Actions CI fails, GitHub automatically notifies this agent. Gemma 4 writes an AST-verified patch and opens a ready-to-merge Pull Request.
+                </p>
+            </div>
+            <span style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.4); color: #22D3EE; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                ● NO CODE CHANGES NEEDED
+            </span>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    g_col1, g_col2 = st.columns([1.1, 1], gap="medium")
+    with g_col1:
+        user_repo = st.text_input("1️⃣ Enter Your GitHub Repository (Owner/Repo)", value="Shubhamjkd01/Nursesycn", placeholder="e.g. your-org/your-repo", key="user_repo_input")
+        server_choice = st.selectbox(
+            "2️⃣ Select Your Agent Backend Host",
+            [
+                "Hosted Cloud Server (DigitalOcean / Production)",
+                "Local Machine via Ngrok Tunnel (https://xxxx.ngrok-free.app)",
+                "Local Machine Direct (http://localhost:7860)"
+            ],
+            key="server_choice_select"
+        )
+        
+        if "DigitalOcean" in server_choice:
+            webhook_target = "https://aidevops-backend.ondigitalocean.app/api/v1/webhook/github"
+        elif "Ngrok" in server_choice:
+            ngrok_subdomain = st.text_input("Enter your Ngrok Domain / URL", value="https://ai-devops.ngrok-free.app", key="ngrok_subdomain_input")
+            webhook_target = f"{ngrok_subdomain.rstrip('/')}/api/v1/webhook/github"
+        else:
+            webhook_target = "http://localhost:7860/api/v1/webhook/github"
+            
+    with g_col2:
+        st.markdown(f"""
+        <div class="config-preview-box">
+            <div style="color: #64748B; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">
+                📋 Your Ready-to-Copy GitHub Webhook Settings:
+            </div>
+            <div style="margin-bottom: 0.4rem;">
+                <span class="config-label">Payload URL:</span>
+                <span style="color: #F8FAFC; word-break: break-all;">{webhook_target}</span>
+            </div>
+            <div style="margin-bottom: 0.4rem;">
+                <span class="config-label">Content type:</span>
+                <span style="color: #38BDF8; font-weight: 700;">application/json</span>
+            </div>
+            <div style="margin-bottom: 0.4rem;">
+                <span class="config-label">Secret:</span>
+                <span style="color: #F8FAFC;">(Optional / matching your .env)</span>
+            </div>
+            <div>
+                <span class="config-label">SSL verification:</span>
+                <span style="color: #34D399; font-weight: 700;">Enable SSL</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+        <div style="margin-top: 0.8rem;">
+            <a href="https://github.com/{user_repo}/settings/hooks/new" target="_blank" style="
+                display: block;
+                text-align: center;
+                background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+                color: #FFFFFF !important;
+                padding: 0.65rem 1.2rem;
+                border-radius: 9999px;
+                font-weight: 700;
+                font-size: 0.85rem;
+                text-decoration: none;
+                box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+            ">
+                ⚡ Open GitHub Webhook Settings for {user_repo} ↗
+            </a>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    st.markdown("""
+    <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 1.8rem 0 1.2rem 0;"></div>
+    <h4 style="color: #FFFFFF; font-size: 1.05rem; margin-bottom: 1.2rem;">📌 4-Step GitHub Setup Guide</h4>
+    
+    <div class="step-item">
+        <div class="step-badge step-badge-cyan">1</div>
+        <div class="step-content">
+            <div class="step-heading">Open Repository Webhook Settings</div>
+            <div class="step-subtext">
+                Go to your GitHub repository &rarr; click <strong>Settings</strong> tab &rarr; in the left sidebar click <strong>Webhooks</strong> &rarr; click the <strong>Add webhook</strong> button.
+            </div>
+        </div>
+    </div>
+    
+    <div class="step-item">
+        <div class="step-badge step-badge-cyan">2</div>
+        <div class="step-content">
+            <div class="step-heading">Configure Payload URL & Content Type</div>
+            <div class="step-subtext">
+                Paste the <strong>Payload URL</strong> generated in the box above.<br>
+                Change <strong>Content type</strong> from <code>application/x-www-form-urlencoded</code> to <strong><code>application/json</code></strong>.
+            </div>
+        </div>
+    </div>
+    
+    <div class="step-item">
+        <div class="step-badge step-badge-cyan">3</div>
+        <div class="step-content">
+            <div class="step-heading">Select Individual Trigger Events</div>
+            <div class="step-subtext">
+                Under <em>"Which events would you like to trigger this webhook?"</em>, choose <strong>Let me select individual events</strong>.<br>
+                Check the following 3 events:
+                <ul style="margin: 0.4rem 0 0 1.2rem; padding: 0;">
+                    <li><strong style="color: #38BDF8;">Workflow runs</strong> &mdash; Triggers Gemma 4 when your CI/CD job fails.</li>
+                    <li><strong style="color: #38BDF8;">Check suites</strong> &mdash; Monitors GitHub Actions test suites.</li>
+                    <li><strong style="color: #38BDF8;">Pull requests</strong> &mdash; Tracks PR merges/closures for reinforcement learning feedback.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="step-item">
+        <div class="step-badge step-badge-cyan">4</div>
+        <div class="step-content">
+            <div class="step-heading">Save and Verify</div>
+            <div class="step-subtext">
+                Make sure <strong>Active</strong> is checked, then click <strong>Add webhook</strong>.<br>
+                GitHub will send an initial <code>ping</code> event with a green checkmark indicating successful connection!
+            </div>
+        </div>
+    </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with guide_tab2:
+    st.markdown("""
+    <div class="guide-card guide-card-purple" id="local-install">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">💻 Install & Run Locally on Your Machine</h3>
+                <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
+                    Run the autonomous FastAPI agent backend and Streamlit dashboard locally on your system using Python or Docker.
+                </p>
+            </div>
+            <span style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #C084FC; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                ● 100% OPEN-WEIGHT GEMMA 4
+            </span>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    os_tab1, os_tab2, os_tab3 = st.tabs(["🪟 Windows (PowerShell)", "🍎 macOS & 🐧 Linux", "🐳 Docker Compose (1-Click)"])
+    
+    with os_tab1:
+        st.markdown("""
+        **Step 1: Clone the repository:**
+        ```powershell
+        git clone https://github.com/Shubhamjkd01/AI_DevOps_X.git
+        cd AI_DevOps_X
+        ```
+        
+        **Step 2: Create a virtual environment & install dependencies:**
+        ```powershell
+        python -m venv venv
+        .\\venv\\Scripts\\activate
+        pip install -r requirements.txt
+        ```
+        
+        **Step 3: Create your `.env` configuration file:**
+        Create a file named `.env` in the repository root directory:
+        ```env
+        # 1. Google Gemma 4 Configuration (Get free key at https://aistudio.google.com/)
+        GEMINI_API_KEY=AIzaSy...your_gemini_api_key_here
+        GEMMA_MODEL_NAME=models/gemma-4-26b-a4b-it
+
+        # 2. GitHub Personal Access Token (PAT with 'repo' & 'workflow' permissions)
+        # Generate at https://github.com/settings/tokens
+        GITHUB_TOKEN=ghp_your_github_token_here
+        GITHUB_WEBHOOK_SECRET=mysecretkey123
+        ```
+        
+        **Step 4: Start the Backend API Server:**
+        ```powershell
+        python -m uvicorn server.app:app --host 0.0.0.0 --port 7860 --reload
+        ```
+        
+        **Step 5: Start the Streamlit Dashboard (in a second terminal):**
+        ```powershell
+        python -m streamlit run dashboard.py --server.port 8501
+        ```
+        
+        **Step 6: (Optional) Connect to real GitHub Actions using Ngrok:**
+        ```powershell
+        ngrok http 7860
+        ```
+        *Copy your public HTTPS URL (e.g. `https://xxxx.ngrok-free.app/api/v1/webhook/github`) into your GitHub repository's Webhook settings!*
+        """)
+        
+    with os_tab2:
+        st.markdown("""
+        **Step 1: Clone and navigate to repo:**
+        ```bash
+        git clone https://github.com/Shubhamjkd01/AI_DevOps_X.git
+        cd AI_DevOps_X
+        ```
+        
+        **Step 2: Set up virtualenv and install packages:**
+        ```bash
+        python3 -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+        ```
+        
+        **Step 3: Create `.env`:**
+        ```bash
+        cat << 'EOF' > .env
+        GEMINI_API_KEY=AIzaSy...your_gemini_api_key_here
+        GEMMA_MODEL_NAME=models/gemma-4-26b-a4b-it
+        GITHUB_TOKEN=ghp_your_github_token_here
+        GITHUB_WEBHOOK_SECRET=mysecretkey123
+        EOF
+        ```
+        
+        **Step 4: Run Backend & Dashboard:**
+        ```bash
+        # Terminal 1 (Backend Engine):
+        uvicorn server.app:app --host 0.0.0.0 --port 7860 --reload
+
+        # Terminal 2 (Streamlit UI):
+        streamlit run dashboard.py --server.port 8501
+        ```
+        """)
+        
+    with os_tab3:
+        st.markdown("""
+        **Run the entire stack in one command with Docker:**
+        ```bash
+        docker compose up --build -d
+        ```
+        - Backend API ready at: `http://localhost:7860`
+        - Streamlit Dashboard ready at: `http://localhost:8501`
+        """)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with guide_tab3:
+    st.markdown("""
+    <div class="guide-card guide-card-emerald">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">🧪 Test Your Webhook Connection</h3>
+                <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
+                    Send an instantaneous test webhook to verify your backend server is receiving and processing GitHub events.
+                </p>
+            </div>
+            <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34D399; padding: 0.35rem 0.9rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                ● LIVE ENDPOINT TESTER
+            </span>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    test_c1, test_c2 = st.columns(2)
+    with test_c1:
+        test_repo_name = st.text_input("Repository for Test", value="Shubhamjkd01/AI_DevOps_X", key="test_repo_ping")
+        test_event_type = st.selectbox("Simulated GitHub Event", ["workflow_run (CI Failure)", "pull_request (PR Feedback)"], key="test_event_type")
+    with test_c2:
+        test_backend_url = st.text_input("Target Backend Webhook URL", value=WEBHOOK_URL, key="test_webhook_url_input")
+        send_ping_btn = st.button("⚡ SEND TEST WEBHOOK PING", key="btn_send_ping", use_container_width=True)
+        
+    if send_ping_btn:
+        with st.spinner("Sending test payload to backend..."):
+            try:
+                if "workflow_run" in test_event_type:
+                    payload = {
+                        "action": "completed",
+                        "workflow_run": {
+                            "id": 99999,
+                            "status": "completed",
+                            "conclusion": "failure",
+                            "head_commit": {"id": "test_sha_123", "author": {"email": "dev@test.org", "name": "Developer"}}
+                        },
+                        "repository": {"full_name": test_repo_name},
+                        "mock_fail_type": "syntax",
+                        "llm_priority": "Google Gemma 4"
+                    }
+                    headers = {"X-GitHub-Event": "workflow_run"}
+                else:
+                    payload = {
+                        "action": "closed",
+                        "pull_request": {"merged": True, "html_url": f"https://github.com/{test_repo_name}/pull/1"},
+                        "repository": {"full_name": test_repo_name}
+                    }
+                    headers = {"X-GitHub-Event": "pull_request"}
+                    
+                resp = requests.post(test_backend_url, json=payload, headers=headers, timeout=5)
+                st.success(f"**HTTP Status:** `{resp.status_code} {resp.reason}`")
+                st.json(resp.json())
+            except Exception as e:
+                st.error(f"Webhook Ping Failed: {e}")
+                
+    st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("<div style='margin-bottom: 3.5rem;'></div>", unsafe_allow_html=True)
 
 # ==========================================
 # INTERACTIVE COMMAND CENTER & TRIAGE

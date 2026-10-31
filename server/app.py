@@ -243,6 +243,7 @@ async def baseline():
 try:
     from routes.webhooks import router as webhook_router
     app.include_router(webhook_router, prefix="/api/v1")
+    app.include_router(webhook_router, prefix="")
 except Exception:
     pass
 

@@ -7,6 +7,7 @@ logging.basicConfig(level=logging.INFO)
 router = APIRouter()
 
 @router.post("/webhook/github")
+@router.post("/webhook")
 async def github_webhook(request: Request):
     """
     Endpoint to receive GitHub Webhooks, specifically workflow failures.
