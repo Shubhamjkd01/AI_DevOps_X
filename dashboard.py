@@ -522,6 +522,75 @@ div[data-baseweb="tab-highlight"], div[data-baseweb="tab-border"] {
     font-weight: 600;
     margin-right: 0.5rem;
 }
+
+/* Developer Profile Card */
+.dev-card {
+    background: rgba(13, 17, 28, 0.85);
+    backdrop-filter: blur(22px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 2.2rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 25px rgba(139, 92, 246, 0.15);
+    position: relative;
+    overflow: hidden;
+    margin-top: 1.5rem;
+}
+.dev-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #EC4899 0%, #8B5CF6 50%, #06B6D4 100%);
+}
+.dev-avatar {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+}
+.dev-tag-chip {
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    color: #C084FC;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    display: inline-block;
+    margin: 0.2rem;
+}
+.dev-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 1.3rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.dev-btn-primary {
+    background: linear-gradient(135deg, #EC4899 0%, #A855F7 100%);
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+}
+.dev-btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #F1F5F9 !important;
+}
+.dev-btn:hover {
+    transform: translateY(-2px);
+}
 </style>
 
 <!-- TOP NAVBAR -->
@@ -535,11 +604,15 @@ div[data-baseweb="tab-highlight"], div[data-baseweb="tab-border"] {
     </div>
     <div class="nav-links">
         <a href="#connect-guide">CONNECT GITHUB</a>
-        <a href="#local-install">RUN LOCALLY</a>
+        <a href="#dev-tips">DEV TIPS</a>
         <a href="#architecture">ARCHITECTURE</a>
         <a href="#triage">LIVE TRIAGE</a>
+        <a href="#about-author">ABOUT DEV</a>
     </div>
-    <div>
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <a href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank" style="color: #F8FAFC; text-decoration: none; font-weight: 700; font-size: 0.82rem; display: flex; align-items: center; gap: 0.35rem; background: rgba(255, 255, 255, 0.08); padding: 0.5rem 1rem; border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.15);">
+            ⭐ STAR REPO
+        </a>
         <a class="nav-btn" href="#connect-guide">
             ⚡ CONNECT GITHUB
         </a>
@@ -708,9 +781,10 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-guide_tab1, guide_tab2, guide_tab3, guide_tab4 = st.tabs([
+guide_tab1, guide_tab2, guide_tab3, guide_tab4, guide_tab5 = st.tabs([
     "🔗 Option A: Connect GitHub via Webhook",
     "💻 Option B: Run Locally / Self-Hosted",
+    "💡 Developer Setup Tips & Best Practices",
     "🛡️ Enterprise Security & Zero-Trust Guarantees",
     "🧪 Live Webhook Ping Tester"
 ])
@@ -961,6 +1035,74 @@ with guide_tab2:
 
 with guide_tab3:
     st.markdown("""
+    <div class="guide-card" style="border-top: 3px solid #EC4899;" id="dev-tips">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.25rem;">💡 Open-Source Setup Tips & Best Practices for Developers</h3>
+                <p style="margin: 0.3rem 0 0 0; color: #94A3B8; font-size: 0.88rem;">
+                    Key tips, free quota optimization, multi-repo routing, and contribution workflows.
+                </p>
+            </div>
+            <a href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank" class="dev-btn dev-btn-primary" style="font-size: 0.78rem; padding: 0.35rem 0.9rem;">
+                ⭐ Fork & Star on GitHub
+            </a>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    t_col1, t_col2 = st.columns(2, gap="medium")
+    with t_col1:
+        st.markdown("""
+        #### 1️⃣ Connect Multiple Repositories to a Single Agent
+        You do not need to deploy separate server instances for each repository. One deployed instance of AI_DevOps_X can handle **unlimited repositories**:
+        - In each repository's settings (`Settings -> Webhooks -> Add Webhook`), paste the same **Payload URL** (`https://<your-deploy-url>/webhook`).
+        - The agent extracts the repository name dynamically from `payload["repository"]["full_name"]` and opens branches and PRs in the correct repository automatically!
+        
+        #### 2️⃣ Free-Tier Google Gemma 4 API (Zero Billing)
+        You do **not** need a paid cloud account to run Gemma 4:
+        - Head over to **[Google AI Studio](https://aistudio.google.com/)** and click **Get API Key**.
+        - Google offers a generous **free tier** (15 RPM / 1M TPM) for Gemma 4 models.
+        - Add `GEMINI_API_KEY=AIzaSy...` in your `.env` or deployment environment variables, and you're ready to go!
+        
+        #### 3️⃣ Test Locally Before Pushing with Ngrok
+        Want to test incoming GitHub Actions webhooks on your local computer before deploying?
+        ```bash
+        # Start local backend on port 7860
+        uvicorn server.app:app --port 7860
+        # Expose port 7860 with ngrok
+        ngrok http 7860
+        ```
+        Copy the `https://xxxx.ngrok-free.app/webhook` URL into your GitHub Webhook settings. When your CI fails, GitHub will trigger your local machine directly!
+        """)
+        
+    with t_col2:
+        st.markdown("""
+        #### 4️⃣ Environment Configuration Matrix
+        Create your `.env` file with these keys:
+        ```env
+        # Primary Open-Weight LLM
+        GEMINI_API_KEY=your_gemini_api_key_here
+        GEMMA_MODEL_NAME=models/gemma-4-26b-a4b-it
+
+        # GitHub Automation Credentials
+        GITHUB_TOKEN=ghp_your_github_token_here
+        GITHUB_WEBHOOK_SECRET=your_secret_passphrase
+
+        # Optional Flags
+        DRY_RUN_MODE=false        # Set true to test without opening PRs
+        AGENT_PORT=7860
+        ```
+        
+        #### 5️⃣ Contributing to AI_DevOps_X
+        This is a 100% open-source project and community contributions are warmly welcomed:
+        - **Bug Reports & Issues:** Submit detailed logs or edge cases in [GitHub Issues](https://github.com/Shubhamjkd01/AI_DevOps_X/issues).
+        - **New Agents & Graders:** Add language support (Go, Rust, TypeScript) under `/agents/` or `/tasks/`.
+        - **Pull Requests:** Fork `Shubhamjkd01/AI_DevOps_X`, create a feature branch, and submit a PR!
+        """)
+        
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with guide_tab4:
+    st.markdown("""
     <div class="guide-card guide-card-emerald">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
             <div>
@@ -1006,7 +1148,7 @@ with guide_tab3:
         
     st.markdown("</div>", unsafe_allow_html=True)
 
-with guide_tab4:
+with guide_tab5:
     st.markdown("""
     <div class="guide-card guide-card-emerald">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem;">
@@ -1158,3 +1300,143 @@ if memory:
     st.dataframe(df, use_container_width=True, hide_index=True)
 else:
     st.info("FAISS vector tensor map is active and ready to log memory iterations.")
+
+st.markdown("<div style='margin-bottom: 4rem;'></div>", unsafe_allow_html=True)
+
+# ==========================================
+# SYSTEM ARCHITECTURE & API DOCUMENTATION
+# ==========================================
+st.markdown("""
+<div class="section-header" id="docs">
+    <div class="section-tag">DOCUMENTATION & ARCHITECTURE</div>
+    <div class="section-title">How the Autonomous Engine Operates</div>
+    <div class="section-desc">A five-tier multi-agent pipeline designed for resilient, hallucination-free automated DevOps repairs.</div>
+</div>
+""", unsafe_allow_html=True)
+
+doc_col1, doc_col2 = st.columns([1.1, 1], gap="large")
+with doc_col1:
+    st.markdown("""
+    <div class="guide-card" style="border-top: 3px solid #8B5CF6;">
+        <h4 style="color: #FFFFFF; font-size: 1.1rem; margin-top: 0;">⚡ 5-Tier Agentic Pipeline Workflow</h4>
+        <div class="step-item">
+            <div class="step-badge" style="background: #3B82F6;">1</div>
+            <div class="step-content">
+                <div class="step-heading">Ingestion & Triage</div>
+                <div class="step-subtext">GitHub webhook delivers failure event &rarr; HMAC SHA-256 signature is verified &rarr; logs are downloaded and parsed into structured AST failure frames.</div>
+            </div>
+        </div>
+        <div class="step-item">
+            <div class="step-badge" style="background: #8B5CF6;">2</div>
+            <div class="step-content">
+                <div class="step-heading">FAISS Tensor Memory Retrieval</div>
+                <div class="step-subtext">Queries 768-dimensional L2 tensor embeddings of previously accepted fixes. If a similar failure was resolved before, historical context is injected into Gemma 4's prompt.</div>
+            </div>
+        </div>
+        <div class="step-item">
+            <div class="step-badge" style="background: #EC4899;">3</div>
+            <div class="step-content">
+                <div class="step-heading">Gemma 4 AST Patch Synthesis</div>
+                <div class="step-subtext">Google Gemma 4 (<code>models/gemma-4-26b-a4b-it</code>) reasons over repository AST context to generate a surgical, minimal patch targeting the root cause.</div>
+            </div>
+        </div>
+        <div class="step-item">
+            <div class="step-badge" style="background: #10B981;">4</div>
+            <div class="step-content">
+                <div class="step-heading">AST Safety Guard & Docker Sandbox</div>
+                <div class="step-subtext">Python <code>ast.parse()</code> verifies syntactic validity and blocks dangerous functions (<code>os.system</code>, <code>eval</code>). Ephemeral Docker sandbox runs pytest to verify zero regressions.</div>
+            </div>
+        </div>
+        <div class="step-item">
+            <div class="step-badge" style="background: #06B6D4;">5</div>
+            <div class="step-content">
+                <div class="step-heading">3-Tier Judge & Automated PR</div>
+                <div class="step-subtext">Junior/Senior/Principal LLM Judge evaluates patch quality. If score &ge; 0.5, PR Agent creates branch <code>fix/workflow-{run_id}</code> and opens a ready-to-merge Pull Request.</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with doc_col2:
+    st.markdown("""
+    <div class="guide-card" style="border-top: 3px solid #06B6D4;">
+        <h4 style="color: #FFFFFF; font-size: 1.1rem; margin-top: 0;">🌐 Core API Endpoints</h4>
+        <div style="font-size: 0.84rem; color: #CBD5E1; line-height: 1.65;">
+            <p><strong><code>POST /webhook</code> or <code>/api/v1/webhook/github</code></strong><br>
+            Receives GitHub Action crash webhooks. Triggers background triage and PR synthesis.</p>
+            <p><strong><code>GET /health</code></strong><br>
+            Returns system health, active Gemma 4 model verification, and readiness status.</p>
+            <p><strong><code>GET /tasks</code></strong><br>
+            Returns active OpenEnv benchmark tasks and grading callables.</p>
+            <p><strong><code>POST /grade</code></strong><br>
+            Executes task graders dynamically against candidate patch diffs.</p>
+            <p><strong><code>POST /reset</code> & <code>POST /step</code></strong><br>
+            Core OpenEnv reinforcement learning simulation environment endpoints.</p>
+        </div>
+        <div style="margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem;">
+            <a href="http://localhost:7860/docs" target="_blank" class="dev-btn dev-btn-secondary" style="font-size: 0.8rem;">
+                📚 Open Swagger API Docs (/docs) ↗
+            </a>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<div style='margin-bottom: 3.5rem;'></div>", unsafe_allow_html=True)
+
+# ==========================================
+# ABOUT THE DEVELOPER (SHUBHAM)
+# ==========================================
+st.markdown("""
+<div class="section-header" id="about-author">
+    <div class="section-tag">OPEN SOURCE CREATOR</div>
+    <div class="section-title">About the Developer</div>
+    <div class="section-desc">Pioneering autonomous developer infrastructure and self-healing CI/CD with open-weight intelligence.</div>
+</div>
+
+<div class="dev-card">
+    <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+        <div class="dev-avatar">
+            👨‍💻
+        </div>
+        <div style="flex: 1; min-width: 280px;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <h3 style="margin: 0; color: #FFFFFF; font-size: 1.6rem; font-weight: 800;">Shubham</h3>
+                <span style="background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.4); color: #C084FC; padding: 0.2rem 0.7rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                    @Shubhamjkd01
+                </span>
+                <span style="background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(6, 182, 212, 0.4); color: #22D3EE; padding: 0.2rem 0.7rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                    AI & DevOps Systems Architect
+                </span>
+            </div>
+            <p style="margin: 0.8rem 0 1.2rem 0; color: #94A3B8; font-size: 0.95rem; line-height: 1.6;">
+                I am an open-source engineer passionate about eliminating developer downtime. I designed <strong>AI DevOps</strong> to transform broken CI/CD pipelines into self-healing workflows powered by Google's open-weight <strong>Gemma 4</strong> models, rigorous AST syntax validation, and episodic vector memory.
+            </p>
+            <div style="margin-bottom: 1.2rem;">
+                <span class="dev-tag-chip">🐍 Python 3.11</span>
+                <span class="dev-tag-chip">🤖 Google Gemma 4</span>
+                <span class="dev-tag-chip">⚡ FastAPI</span>
+                <span class="dev-tag-chip">🎨 Streamlit</span>
+                <span class="dev-tag-chip">🐙 GitHub Actions</span>
+                <span class="dev-tag-chip">🐳 Docker</span>
+                <span class="dev-tag-chip">🧠 FAISS Vector Memory</span>
+                <span class="dev-tag-chip">🌊 DigitalOcean</span>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <a href="https://github.com/Shubhamjkd01" target="_blank" class="dev-btn dev-btn-primary">
+                    🐙 GitHub Profile: @Shubhamjkd01
+                </a>
+                <a href="https://github.com/Shubhamjkd01/AI_DevOps_X" target="_blank" class="dev-btn dev-btn-secondary">
+                    ⭐ Project Repo: AI_DevOps_X
+                </a>
+                <a href="https://github.com/Shubhamjkd01/AI_DevOps_X/issues" target="_blank" class="dev-btn dev-btn-secondary">
+                    💬 Report Issue / Feedback
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 3.5rem; color: #64748B; font-size: 0.8rem;">
+    Built with ❤️ by <a href="https://github.com/Shubhamjkd01" target="_blank" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Shubham</a> &bull; Powered by Google Gemma 4 &bull; 100% Free & Open-Source Software
+</div>
+""", unsafe_allow_html=True)
