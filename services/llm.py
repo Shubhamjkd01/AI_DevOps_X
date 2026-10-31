@@ -127,14 +127,14 @@ def _try_hf_model(client: OpenAI, model_name: str, prompt: str, timeout: float =
     return content
 
 def _try_groq(prompt: str) -> str:
-    """Try Groq as secondary fallback."""
+    """Try Groq Gemma 2 open-weights model."""
     groq_key = os.getenv("GROQ_API_KEY")
     if not groq_key:
         raise ValueError("No GROQ_API_KEY")
     import groq as groq_lib
     client = groq_lib.Groq(api_key=groq_key)
     response = client.chat.completions.create(
-        model="llama-3.1-70b-versatile",
+        model=os.getenv("GROQ_MODEL", "gemma2-9b-it"),
         messages=[{"role": "user", "content": prompt}],
         temperature=0.2,
         max_tokens=1024
@@ -144,11 +144,11 @@ def _try_groq(prompt: str) -> str:
 def _try_gemma(prompt: str) -> str:
     """
     Primary inference using Google's open-weights Gemma models via the Gemini API.
-    Cascades from Gemma-2-27B to Gemma-2-9B with graceful fallback to Gemini-1.5-Flash.
+    Cascades from Gemma-2-27B to Gemma-2-9B.
     """
-    gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    gemini_key = os.getenv("GEMMA_API_KEY") or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if not gemini_key:
-        raise ValueError("No GEMINI_API_KEY or GOOGLE_API_KEY provided")
+        raise ValueError("No GEMMA_API_KEY, GEMINI_API_KEY or GOOGLE_API_KEY provided")
     import google.generativeai as genai
     genai.configure(api_key=gemini_key)
 
@@ -191,7 +191,7 @@ def query_llm(prompt: str, llm_priority: str = None) -> str:
         return get_fallback_fix(prompt)
 
     # --- Cascade 1: Google Gemma via Gemini API ---
-    if os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"):
+    if os.getenv("GEMMA_API_KEY") or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"):
         try:
             logger.info("LLM Cascade [1/5]: Trying Google Gemma via Gemini API...")
             return _try_gemma(prompt)
