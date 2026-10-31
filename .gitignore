@@ -1,8 +1,33 @@
+# Environments & Credentials
 .env
+.env.*
+.venv/
+venv/
+env/
+
+# Python cache & build
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 .pytest_cache/
-.DS_Store
-/venv
-/env
+*.egg-info/
+dist/
+build/
+
+# Binaries & Executables
+*.exe
+ngrok
 ngrok.exe
+
+# Debug & Execution Logs
+*.log
+*debug*.txt
+test_log.txt
+out.txt
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
